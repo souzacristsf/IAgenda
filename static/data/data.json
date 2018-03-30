@@ -1,0 +1,47 @@
+[
+  {
+    "id": "C001",
+    "name": "Pesto Bruchetta",
+    "author": "Denalidecor",
+    "imageUrl": "http://res.cloudinary.com/souzacristsf/image/upload/c_scale,h_576,w_864/v1522350936/corac.jpg",
+    "imageModal": "http://res.cloudinary.com/souzacristsf/image/upload/c_scale,h_230,w_408/v1522350936/corac.jpg",
+    "description": "Foto com o coração",
+    "price":"R$ 5,00"
+  },
+  {
+    "id": "C002",
+    "name": "Pesto Bruchetta",
+    "author": "Denalidecor",
+    "imageUrl": "http://res.cloudinary.com/souzacristsf/image/upload/c_scale,h_576,w_864/v1522350445/urso.jpg",
+    "imageModal": "http://res.cloudinary.com/souzacristsf/image/upload/c_scale,h_230,w_408/v1522350445/urso.jpg",
+    "description": "Foto com o coração",
+    "price":"R$ 5,00"
+  },
+  {
+    "id": "C003",
+    "name": "Pesto Bruchetta",
+    "author": "Denalidecor",
+    "imageUrl": "http://res.cloudinary.com/souzacristsf/image/upload/c_scale,h_576,w_864/v1522350444/indio.jpg",
+    "imageModal": "http://res.cloudinary.com/souzacristsf/image/upload/c_scale,h_230,w_408/v1522350444/indio.jpg",
+    "description": "Foto com o coração",
+    "price":"R$ 5,00"
+  },
+  {
+    "id": "C004",
+    "name": "Pesto Bruchetta",
+    "author": "Denalidecor",
+    "imageUrl": "http://res.cloudinary.com/souzacristsf/image/upload/c_scale,h_576,w_864/v1522350437/folha.jpg",
+    "imageModal": "http://res.cloudinary.com/souzacristsf/image/upload/c_scale,h_230,w_408/v1522350437/folha.jpg",
+    "description": "Foto com o coração",
+    "price":"R$ 5,00"
+  },
+  {
+    "id": "C005",
+    "name": "Pesto Bruchetta",
+    "author": "Denalidecor",
+    "imageUrl": "http://res.cloudinary.com/souzacristsf/image/upload/v1522350435/gato.jpg",
+    "imageModal": "http://res.cloudinary.com/souzacristsf/image/upload/c_scale,h_230,w_408/v1522350435/gato.jpg",
+    "description": "Foto com o coração",
+    "price":"R$ 5,00"
+  }
+]
