@@ -1,45 +1,8 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" max-width="600px">
-      <v-btn
-        color="primary"
-        dark slot="activator"
-        class="mb-2 text-xs-right">Nova Agenda</v-btn>
-      <v-card>
-        <v-card-title>
-          <span class="headline">{{ formTitle }}</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex xs12 sm6 md4>
-                <v-text-field label="Agenda" v-model="editedItem.agenda"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field label="Sobre" v-model="editedItem.sobre"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field type="date" label="Data Inicio" v-model="editedItem.dataInicial"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field type="date" label="Data Fim" v-model="editedItem.dataFim"></v-text-field>
-              </v-flex>
-              <!-- <v-flex xs12 sm6 md4>
-                <v-text-field label="Protein (g)" v-model="editedItem.protein"></v-text-field>
-              </v-flex> -->
-            </v-layout>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-card>
       <v-card-title>
-        Minha Agenda
+        Meus Eventos
         <v-spacer></v-spacer>
         <v-text-field
           append-icon="search"
@@ -56,7 +19,7 @@
         :search="search"
       >
         <template slot="items" slot-scope="props">
-          <td>{{ props.item.agenda }}</td>
+          <td>{{ props.item.evento }}</td>
           <td class="text-xs-left">{{ props.item.sobre }}</td>
           <td class="text-xs-left">{{ props.item.dataInicial.toLocaleString() }}</td>
           <td class="text-xs-left">{{ props.item.dataFim.toLocaleString() }}</td>
@@ -77,6 +40,46 @@
         </template>
       </v-data-table>
     </v-card>
+    <v-container>
+      <v-flex offset-sm11>
+        <v-dialog v-model="dialog" max-width="600px">
+          <v-card>
+            <v-card-title>
+              <span class="headline">{{ formTitle }}</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container grid-list-md>
+                <v-layout wrap>
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field label="Evento" v-model="editedItem.evento"></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field label="Sobre" v-model="editedItem.sobre"></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field type="date" label="Data Inicio" v-model="editedItem.dataInicial"></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field type="date" label="Data Fim" v-model="editedItem.dataFim"></v-text-field>
+                  </v-flex>
+                  <!-- <v-flex xs12 sm6 md4>
+                    <v-text-field label="Protein (g)" v-model="editedItem.protein"></v-text-field>
+                  </v-flex> -->
+                </v-layout>
+              </v-container>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
+              <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
+            </v-card-actions>
+          </v-card>
+          <v-btn fab color="primary" slot="activator">
+            <v-icon dark>add</v-icon>
+          </v-btn>
+        </v-dialog>
+      </v-flex>
+    </v-container>
   </div>
 </template>
 <script>
@@ -87,10 +90,10 @@
       dialog: false,
       headers: [
         {
-          text: 'Agendas',
+          text: 'Evento',
           align: 'left',
           sortable: false,
-          value: 'agenda'
+          value: 'evento'
         },
         {
           text: 'Sobre',
@@ -109,13 +112,13 @@
       items: [],
       editedIndex: -1,
       editedItem: {
-        agenda: '',
+        evento: '',
         sobre: '',
         dataInicial: '',
         dataFim: ''
       },
       defaultItem: {
-        agenda: '',
+        evento: '',
         sobre: '',
         dataInicial: '',
         dataFim: ''
@@ -124,7 +127,7 @@
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Nova Agenda' : 'Editar Agenda'
+        return this.editedIndex === -1 ? 'Novo Evento' : 'Editar Evento'
       }
     },
 
@@ -142,31 +145,31 @@
       initialize () {
         this.items = [
           {
-            agenda: 'Trabalho',
+            evento: 'Trabalho',
             sobre: 'Reunião',
             dataInicial: new Date(),
             dataFim: new Date()
           },
           {
-            agenda: 'Trabalho',
+            evento: 'Trabalho',
             sobre: 'Ensinar o estag',
             dataInicial: new Date(),
             dataFim: new Date()
           },
           {
-            agenda: 'Trabalho',
+            evento: 'Trabalho',
             sobre: 'Matar o Chefe',
             dataInicial: new Date(),
             dataFim: new Date()
           },
           {
-            agenda: 'Futbol',
+            evento: 'Futbol',
             sobre: 'Jogar uma pelada',
             dataInicial: new Date(),
             dataFim: new Date()
           },
           {
-            agenda: 'Faculdade',
+            evento: 'Faculdade',
             sobre: 'Fazer Trabalho',
             dataInicial: new Date(),
             dataFim: new Date()
@@ -205,8 +208,8 @@
         } else {
           const dtIncio = new Date(this.editedItem.dataInicial)
           const dtFim = new Date(this.editedItem.dataFim)
-          const novaAgenda = {
-            agenda: this.editedItem.agenda,
+          const novoEvento = {
+            evento: this.editedItem.evento,
             sobre: this.editedItem.sobre,
             dataInicial: new Date(
               dtIncio.getFullYear(),
@@ -219,7 +222,7 @@
               dtFim.getDate() + 1
             )
           }
-          this.items.push(novaAgenda)
+          this.items.push(novoEvento)
         }
         this.close()
         this.setCompromisso()

@@ -4,7 +4,7 @@
     <v-flex xs12 sm6 offset-sm3>
       <v-card>
           <v-toolbar color="primary" dark>
-            <v-toolbar-title>Login</v-toolbar-title>
+            <v-toolbar-title>Registrar</v-toolbar-title>
             <v-spacer></v-spacer>
           </v-toolbar>
           <v-form v-model="valid" ref="form" lazy-validation>
@@ -17,33 +17,23 @@
                   required
                 ></v-text-field>
                 <v-text-field
+                  label="Password"
+                  v-model="password"
+                  :rules="emailRules"
+                  required
+                ></v-text-field>
+                <v-text-field
                   label="E-mail"
                   v-model="email"
                   :rules="emailRules"
                   required
                 ></v-text-field>
-                <v-checkbox
-                  label="Manter conectado?"
-                  v-model="checkbox"
-                  :rules="[v => !!v || 'You must agree to continue!']"
-                  required
-                ></v-checkbox>
                  <v-layout row>
                   <v-flex  >
                     <v-btn
                       block
-                      @click="submit"
-                      large="true"
-                      to="/home"
-                      color="success"
-                      :disabled="!valid"
-                    >Entrar
-                    </v-btn>
-                    <v-btn
-                      block
                       color="primary"
-                      to="/auth/signup"
-                    >Registrar
+                      @click="clear">Registrar
                     </v-btn>
                   </v-flex>
                  </v-layout>

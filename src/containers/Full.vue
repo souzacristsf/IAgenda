@@ -69,3 +69,8 @@ export default {
   name: 'App'
 }
 </script>
+<style>
+ /* .toolbar--fixed {
+   padding-left: 200px !important;
+ } */
+</style>
