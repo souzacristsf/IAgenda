@@ -10,21 +10,21 @@
           <v-form v-model="valid" ref="form" lazy-validation>
             <v-container grid-list-xl fluid>
                 <v-text-field
-                  label="Name"
-                  v-model="name"
+                  label="Username"
+                  v-model="form['username']"
                   :rules="nameRules"
                   :counter="10"
                   required
                 ></v-text-field>
                 <v-text-field
                   label="Password"
-                  v-model="password"
-                  :rules="emailRules"
+                  v-model="form['password']"
+                  :rules="passwordRules"
                   required
                 ></v-text-field>
                 <v-text-field
                   label="E-mail"
-                  v-model="email"
+                  v-model="form['email']"
                   :rules="emailRules"
                   required
                 ></v-text-field>
@@ -33,7 +33,7 @@
                     <v-btn
                       block
                       color="primary"
-                      @click="clear">Registrar
+                      @click="submit">Registrar
                     </v-btn>
                   </v-flex>
                  </v-layout>
@@ -55,13 +55,20 @@
 
   export default {
     data: () => ({
+      form: {
+        password: '',
+        email: '',
+        username: ''
+      },
       valid: true,
-      name: '',
       nameRules: [
         v => !!v || 'Name is required',
         v => (v && v.length <= 10) || 'Name must be less than 10 characters'
       ],
-      email: '',
+      passwordRules: [
+        v => !!v || 'Name is required',
+        v => (v && v.length <= 10) || 'Name must be less than 10 characters'
+      ],
       emailRules: [
         v => !!v || 'E-mail is required',
         v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
@@ -78,14 +85,16 @@
 
     methods: {
       submit () {
+        console.log('Entrou no submit')
         if (this.$refs.form.validate()) {
+          console.log('Entrou Aqui: ', this.form)
           // Native form submission is not yet supported
-          axios.post('/api/submit', {
-            name: this.name,
-            email: this.email,
-            select: this.select,
-            checkbox: this.checkbox
+          axios.post('http://localhost:4040/api/users', {
+            username: this.form.username,
+            email: this.form.email,
+            password: this.form.password
           })
+          .then(data => console.log('Inseriu usuario: ', data))
         }
       },
       clear () {
