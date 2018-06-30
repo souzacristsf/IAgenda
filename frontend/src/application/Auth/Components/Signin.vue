@@ -8,24 +8,25 @@
             <v-spacer></v-spacer>
           </v-toolbar>
           <v-form v-model="valid" ref="form" lazy-validation>
+            <m-alert :msg="msg" :errorAlert="errorAlert"/>
             <v-container grid-list-xl fluid>
                 <v-text-field
-                  label="Name"
-                  v-model="name"
+                  label="Username ou E-mail"
+                  v-model="form['username']"
                   :rules="nameRules"
-                  :counter="10"
+                  :counter="15"
                   required
                 ></v-text-field>
                 <v-text-field
-                  label="E-mail"
-                  v-model="email"
-                  :rules="emailRules"
+                  label="Password"
+                  v-model="form['password']"
+                  :rules="passwordRules"
                   required
                 ></v-text-field>
                 <v-checkbox
                   label="Manter conectado?"
                   v-model="checkbox"
-                  :rules="[v => !!v || 'You must agree to continue!']"
+                  :rules="[v => !!v || 'Campo Obrigatorio!']"
                   required
                 ></v-checkbox>
                  <v-layout row>
@@ -33,8 +34,7 @@
                     <v-btn
                       block
                       @click="submit"
-                      large="true"
-                      to="/home"
+                      large
                       color="success"
                       :disabled="!valid"
                     >Entrar
@@ -61,41 +61,59 @@
   }
 </style>
 <script>
-  import axios from 'axios'
+  import MAlert from '../../Components/Alert.vue'
+  import {mapActions} from 'vuex'
+  // import axios from 'axios'
 
   export default {
+    components: {
+      MAlert
+    },
     data: () => ({
       valid: true,
-      name: '',
+      form: {
+        username: '',
+        password: ''
+      },
       nameRules: [
-        v => !!v || 'Name is required',
-        v => (v && v.length <= 10) || 'Name must be less than 10 characters'
+        v => !!v || 'Username é Obrigatorio',
+        v => (v && v.length <= 15) || 'Username até 15 carateres'
       ],
-      email: '',
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
+      passwordRules: [
+        v => !!v || 'Campo Obrigatorio*',
+        v => (v && v.length <= 10) || 'Password até 10 carateres'
       ],
       select: null,
-      items: [
-        'Item 1',
-        'Item 2',
-        'Item 3',
-        'Item 4'
-      ],
-      checkbox: false
+      checkbox: false,
+      errorAlert: false,
+      msg: ''
     }),
 
     methods: {
+      ...mapActions([
+        'attemptLogin'
+      ]),
       submit () {
+        const {username, password} = this.form
         if (this.$refs.form.validate()) {
           // Native form submission is not yet supported
-          axios.post('/api/submit', {
-            name: this.name,
-            email: this.email,
-            select: this.select,
-            checkbox: this.checkbox
+          this.attemptLogin({username, password})
+          .then((data) => {
+            console.log('Dados: ', data)
+            this.$router.push('/home')
           })
+          .catch(err => {
+            this.errorAlert = true
+            this.msg = err.response.data.message
+            console.log('oi: ', err.response.data.message)
+          })
+          // axios.post('http://localhost:4040/api/auth', {
+          //   username: this.username,
+          //   password: this.password
+          // }).then(data => console.log('Dados: ', data)
+          // this.$router.push('/home')
+          // )
+          // to="/home"
         }
       },
       clear () {

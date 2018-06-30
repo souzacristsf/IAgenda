@@ -22,7 +22,7 @@ module.exports = {
   },
 
   // POST /api/auth/login
-  login: {
+  auth: {
     body: {
       username: Joi.string().required(),
       password: Joi.string().required()

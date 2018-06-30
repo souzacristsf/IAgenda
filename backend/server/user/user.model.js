@@ -20,6 +20,14 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  isActive: {
+    type: Boolean,
+    required: true,
+    default: true
+  },
+  token: {
+    type: String
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -55,7 +63,22 @@ UserSchema.statics = {
         if (user) {
           return user;
         }
-        const err = new APIError('No such user exists!', httpStatus.NOT_FOUND);
+        const err = new APIError('Usuario não existe!', httpStatus.NOT_FOUND);
+        return Promise.reject(err);
+      });
+  },
+  /**
+   * @param  {} field - return user
+   * @returns {Promise<User, APIError>}
+   */
+  findByField(field) {
+    return this.findOne({ $or: [{ username: field }, { email: field }] })
+      .exec()
+      .then((user) => {
+        if (user) {
+          return user;
+        }
+        const err = new APIError('Usuario ou Senha incorreto!!!', httpStatus.NOT_FOUND);
         return Promise.reject(err);
       });
   },

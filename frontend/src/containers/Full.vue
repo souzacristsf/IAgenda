@@ -41,6 +41,9 @@
       </v-btn>
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
+      <p>
+        {{email}}
+      </p>
     </v-toolbar>
     <v-content>
       <router-view/>
@@ -53,20 +56,33 @@
 
 <script>
 import nav from '../_nav'
+import { getUser } from '@/auth'
+
 export default {
+  name: 'App',
   data () {
     return {
-      clipped: false,
+      clipped: true,
       drawer: true,
       fixed: false,
       items: nav.items,
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'IAgenda'
+      title: 'IAgenda',
+      email: ''
     }
   },
-  name: 'App'
+  // computed: {
+  //   // mix the getters into computed with object spread operator
+  //   ...mapGetters([
+  //     'getAuthEmail'
+  //   ])
+  // },
+  mounted () {
+    getUser()
+      .then(user => (this.email = user.email))
+  }
 }
 </script>
 <style>

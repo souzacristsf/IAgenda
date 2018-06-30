@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 import {
   Vuetify,
   VApp,
@@ -22,7 +23,8 @@ import {
   VGrid,
   VAlert,
   VToolbar,
-  transitions
+  transitions,
+  VProgressLinear
 } from 'vuetify'
 import '../node_modules/vuetify/src/stylus/app.styl'
 
@@ -45,7 +47,8 @@ Vue.use(Vuetify, {
     VGrid,
     VAlert,
     VToolbar,
-    transitions
+    transitions,
+    VProgressLinear
   },
   theme: {
     primary: '#2196f3',
@@ -64,6 +67,7 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

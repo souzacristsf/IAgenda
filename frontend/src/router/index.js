@@ -18,12 +18,14 @@ export default new Router({
     {
       path: '/auth/signin',
       name: 'Signin',
-      component: Signin
+      component: Signin,
+      meta: { requiresAuth: false }
     },
     {
       path: '/auth/signup',
       name: 'Signup',
-      component: Signup
+      component: Signup,
+      meta: { requiresAuth: false }
     },
     {
       path: '/home',

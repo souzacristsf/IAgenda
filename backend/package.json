@@ -1,14 +1,13 @@
 {
-  "name": "express-mongoose-es6-rest-api",
+  "name": "api-iagenda",
   "version": "5.0.0",
-  "description": "A Boilerplate application for building REST APIs using express, mongoose in ES6 with code coverage",
+  "description": "API for aplication IAgenda",
   "author": "Kunal Kapadia <kunalkapadia12@gmail.com>",
   "main": "index.js",
   "private": false,
   "engines": {
     "node": ">=8.10.0",
-    "npm": ">=5.6.0",
-    "yarn": ">=1.5.1"
+    "npm": ">=5.6.0"
   },
   "scripts": {
     "start": "node index.js",
