@@ -27,7 +27,7 @@ function auth(req, res, next) {
     .then(({ user, token }) => {
       res.json({ user, token, success: true });
     })
-    .catch(err => res.status(err.status).json({ message: err.message, success: false }));
+    .catch(err => next(err));
 
 
   // const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
@@ -36,7 +36,7 @@ function auth(req, res, next) {
 
 function comparePassword(passwordBody, { email, password, username, _id }) {
   return new Promise((resolve, reject) => {
-    if (passwordBody != password) {
+    if (passwordBody !== password) {
       reject(new APIError('Usuario ou Senha incorreto!!!', httpStatus.UNAUTHORIZED, true));
     }
     resolve({

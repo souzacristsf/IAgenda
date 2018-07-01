@@ -8,6 +8,7 @@
     <v-card>
       <v-container>
       <v-form ref="form">
+        <m-alert :alert="alert" :errorAlert="errorAlert" :msg="msg"/>
         <v-text-field
           label="Nome Agenda"
           v-model="name"
@@ -42,9 +43,13 @@
 import { validationMixin } from 'vuelidate'
 import { createSchedule } from '../services.js'
 import { required, maxLength, email } from 'vuelidate/lib/validators'
+import MAlert from '../../Components/Alert.vue'
+
 export default {
   mixins: [validationMixin],
-
+  components: {
+    MAlert
+  },
   validations: {
     name: { required, maxLength: maxLength(10) },
     email: { required, email },
@@ -55,7 +60,10 @@ export default {
   data: () => ({
     name: '',
     email: '',
-    checkbox: false
+    checkbox: false,
+    alert: false,
+    errorAlert: false,
+    msg: ''
   }),
 
   computed: {
@@ -89,9 +97,19 @@ export default {
           shared_users: this.email
         }
         createSchedule(schedule)
-          .then(data => console.log('Agenda cadastrada com sucesso', data))
+          .then(this.mySetVar)
+          .catch(err => {
+            console.log(`Err? `, err)
+            this.errorAlert = true
+            this.msg = err.response.data.message
+          })
       }
       this.$v.$touch()
+    },
+    mySetVar () {
+      this.alert = true
+      this.msg = 'Agenda cadastrada com sucesso!!!'
+      this.clear()
     },
     // clear () {
     //   this.$v.$reset()

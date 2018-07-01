@@ -104,7 +104,7 @@
           console.log('Entrou Aqui: ', this.form)
           this.dialog = true
           // Native form submission is not yet supported
-          axios.post('http://localhost:4040/api/users', {
+          axios.post('https://iagenda.herokuapp.com/api/users', {
             username: this.form.username,
             email: this.form.email,
             password: this.form.password
@@ -120,6 +120,7 @@
       mySetVar () {
         this.alert = true
         this.dialog = false
+        this.msg = 'Usuario cadastrado com sucesso!!!'
         this.clear()
       },
       clear () {

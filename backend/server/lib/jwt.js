@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { token } = require('../errors/system');
+const { tokenMsg } = require('../errors/system');
 const config = require('../../config/express');
 const httpStatus = require('http-status');
 const APIError = require('../helpers/APIError');
@@ -13,11 +13,13 @@ const validateToken = ({ authorization }) =>
       reject(new APIError(tokenMsg.authenticate, httpStatus.UNAUTHORIZED, true));
     }
     const parts = authorization.split(' ');
-    const token = parts[1];
+    const token = parts[1];  // eslint-disable-line new-cap
     const scheme = parts[0];
     if (!parts.length === 2) throw tokenMsg.isInvalid;
 
-    if (!/^Bearer$/i.test(scheme)) reject(new APIError(tokenMsg.malFormatted, httpStatus.UNAUTHORIZED, true));
+    if (!/^Bearer$/i.test(scheme)) {
+      reject(new APIError(tokenMsg.malFormatted, httpStatus.UNAUTHORIZED, true));
+    }
 
     return jwt.verify(token, JWT_SECRET, (err, { data }) => {
     // const isTokenDB = Service.findByOneField('token', { id: data.id });

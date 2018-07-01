@@ -1,4 +1,4 @@
-module.exports.token = {
+module.exports.tokenMsg = {
   expired: {
     title: 'Access',
     message: 'Access Expired, please sign in again'
