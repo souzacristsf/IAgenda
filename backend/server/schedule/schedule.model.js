@@ -28,6 +28,7 @@ const event = [{
     }
   ]
 }];
+
 /**
  * Schedule Schema
  */
@@ -45,13 +46,15 @@ const ScheduleSchema = new mongoose.Schema({
   user_id: {
     type: Schema.Types.ObjectId,
     ref: 'User'
-  },  
+  },
   event,
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
+
+ScheduleSchema.index({ user_id: 1, name: 1 }, { unique: true });
 
 /**
  * Add your
