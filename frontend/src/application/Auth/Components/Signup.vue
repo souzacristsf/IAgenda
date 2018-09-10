@@ -64,7 +64,8 @@
 </style>
 <script>
   import MAlert from '../../Components/Alert.vue'
-  import axios from 'axios'
+  // import axios from 'axios'
+  import { create } from '../services.js'
 
   export default {
     components: {
@@ -104,7 +105,13 @@
           console.log('Entrou Aqui: ', this.form)
           this.dialog = true
           // Native form submission is not yet supported
-          axios.post('https://iagenda.herokuapp.com/api/users', {
+          // axios.post('https://iagenda.herokuapp.com/api/users', {
+          // axios.post('https://iagenda.herokuapp.com/api/users', {
+          //   username: this.form.username,
+          //   email: this.form.email,
+          //   password: this.form.password
+          // })
+          create({
             username: this.form.username,
             email: this.form.email,
             password: this.form.password

@@ -4,8 +4,8 @@ import { getToken } from '@/auth'
 getToken().then(token => setInitToken(token))
 
 export const http = axios.create({
-  baseURL: `https://iagenda.herokuapp.com/`
-  // baseURL: `http://${document.location.hostname}:4040/`
+  // baseURL: `https://iagenda.herokuapp.com/`
+  baseURL: `http://${document.location.hostname}:4040/`
   // timeout: 1000
 })
 

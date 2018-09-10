@@ -7,3 +7,7 @@ export const doLogin = data => {
 export const loadUserData = data => {
   return http.post('/auth/login', data).then(response => response.data)
 }
+
+export const create = data => {
+  return http.post('/api/users', data).then(response => response.data)
+}

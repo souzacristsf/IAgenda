@@ -18,7 +18,8 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   isActive: {
     type: Boolean,
@@ -95,7 +96,26 @@ UserSchema.statics = {
       .skip(+skip)
       .limit(+limit)
       .exec();
+  },
+
+    /**
+   * Return new validation error
+   * if error is a mongoose duplicate key error
+   *
+   * @param {Error} error
+   * @returns {Error|APIError}
+   */
+  checkDuplicate(error) {
+    // console.log('Teste user: ', error)
+    if (error.name === 'MongoError' && error.code === 11000) {
+      // console.log('MongoError: ', error)
+      return new APIError('username or e-mail already exists', httpStatus.CONFLICT, true);
+      // return Promise.reject(err)
+    }
+
+    return error;
   }
+
 };
 
 /**

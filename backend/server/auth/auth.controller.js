@@ -20,6 +20,7 @@ function auth(req, res, next) {
   // Ideally you'll fetch this from the db
   // Idea here was to show how jwt works with simplicity
   const { username, password } = req.body;
+  console.log('Entrou no auth');
 
   User.findByField(username)
     .then(user => comparePassword(password, user))
@@ -36,6 +37,7 @@ function auth(req, res, next) {
 
 function comparePassword(passwordBody, { email, password, username, _id }) {
   return new Promise((resolve, reject) => {
+    console.log('password', passwordBody, password);
     if (passwordBody !== password) {
       reject(new APIError('Usuario ou Senha incorreto!!!', httpStatus.UNAUTHORIZED, true));
     }

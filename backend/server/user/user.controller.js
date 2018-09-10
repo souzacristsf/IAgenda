@@ -27,16 +27,17 @@ function get(req, res) {
  * @returns {User}
  */
 function create(req, res, next) {
-  console.log('entrou aqui no create user');
+  // console.log('entrou aqui no create user');
   const user = new User({
     username: req.body.username,
     password: req.body.password,
     email: req.body.email
   });
-  console.log('create user:: ', user);
+  // console.log('create user:: ', user);
+  // console.log('User? ', user);
   user.save()
     .then(savedUser => res.json(savedUser))
-    .catch(e => console.log('erro: ', e));
+    .catch(e => next(User.checkDuplicate(e)));
 }
 
 /**
