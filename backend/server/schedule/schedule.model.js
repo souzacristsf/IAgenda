@@ -35,7 +35,9 @@ const event = [{
 const ScheduleSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    lowercase: true,
+    trim: true
   },
   shared_user_id: [
     {

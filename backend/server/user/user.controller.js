@@ -1,4 +1,5 @@
 const User = require('./user.model');
+const Schedule = require('../schedule/schedule.model');
 
 /**
  * Load user and append to req.
@@ -21,6 +22,22 @@ function get(req, res) {
 }
 
 /**
+ * Create new schedule
+ * @property {string} name - The name of schedule.
+ * @property {string} description - The description of schedule.
+ * @returns {Schedule}
+ */
+async function createSchedule(user_id, name) {
+  const schedule = new Schedule({
+    user_id,
+    name
+  });
+
+  return await schedule.save().then(savedSchedule => savedSchedule).catch(e => e);
+}
+
+
+/**
  * Create new user
  * @property {string} req.body.username - The username of user.
  * @property {string} req.body.password - The password of user.
@@ -36,6 +53,10 @@ function create(req, res, next) {
   // console.log('create user:: ', user);
   // console.log('User? ', user);
   user.save()
+    .then((savedUser) => {
+      createSchedule(savedUser._id, savedUser.username);
+      return savedUser;
+    })
     .then(savedUser => res.json(savedUser))
     .catch(e => next(User.checkDuplicate(e)));
 }

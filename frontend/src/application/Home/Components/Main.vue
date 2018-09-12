@@ -7,8 +7,8 @@
     <v-flex xs12 sm4 offset-sm3>
       <v-container>
         <v-select
-          :items="states"
-          v-model="e1"
+          :items="mySchendule"
+          v-model="selSchedule"
           label="Selecione a Agenda"
           single-line
           light="true"
@@ -26,6 +26,8 @@
 <script>
 import DataPicker from '../../Shared/Components/DataPicker'
 import MyTable from '../../Shared/Components/Table'
+import {mapGetters} from 'vuex'
+import {getMySchedule} from '../services'
 
 export default {
   name: 'main-home',
@@ -35,14 +37,28 @@ export default {
   },
   data: () => ({
     arrayEvents: [],
-    states: [
-      'Trabalho', 'Futebol', 'Banco'
-    ]
+    mySchendule: [],
+    selSchedule: ''
   }),
+  computed: {
+    ...mapGetters([
+      'getIdUser'
+    ])
+  },
+  mounted () {
+    this.loadMySchedule()
+  },
   methods: {
     setCompromisso (events) {
       this.arrayEvents = events
       console.log('eventos: ', this.arrayEvents)
+    },
+    loadMySchedule () {
+      getMySchedule(this.getIdUser)
+        .then(({schedule}) => {
+          console.log('schedule: ', schedule)
+          this.mySchendule = schedule.map(s => s.name)
+        })
     }
   }
 }

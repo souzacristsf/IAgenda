@@ -12,6 +12,8 @@ export const getAuthEmail = (state) => {
 
 export const getAuthToken = (state) => state.token
 
+export const getIdUser = (state) => state.user._id
+
 // export const isLogged = (state) => !isEmpty(state.toke)
 
 // export const currentUser = ({ user }) => user

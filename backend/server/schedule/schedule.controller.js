@@ -22,4 +22,15 @@ function create(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { create };
+function getMySchedule(req, res, next) {
+  const { _id } = req.user;
+  const { user_id } = req.params;
+
+  Schedule.find({ user_id })
+    .then(schedule => res.json({ schedule }))
+    .catch(e => next(e));
+
+  console.log('_id: ', _id, 'user_id: ', user_id);
+}
+
+module.exports = { create, getMySchedule };

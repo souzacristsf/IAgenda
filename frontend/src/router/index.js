@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import routes from './routes'
+import beforeEach from './beforeEach'
 import Signin from '@/application/Auth/Components/Signin'
 import Signup from '@/application/Auth/Components/Signup'
 import Full from '@/containers/Full'
@@ -9,7 +10,7 @@ Vue.use(Router)
 
 // const load = component => () => import(`@/app/${component}/Components/${component}.vue`)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -35,3 +36,7 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach(beforeEach)
+
+export default router

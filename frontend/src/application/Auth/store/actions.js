@@ -6,6 +6,7 @@ import { setUser as setuser, getToken, logout as logoff, getUser } from '@/auth'
 export const attemptLogin = ({ dispatch }, payload) => {
   console.log('Entrou aqui no attemptLogin')
   return doLogin(payload).then(response => {
+    console.log('User login: ', response)
     dispatch('setUser', response.user)
     dispatch('setToken', response.token)
     setInitToken(response.token)
@@ -69,8 +70,8 @@ export const checkUserToken = ({ dispatch, state }) => {
 
 export const loadUser = async ({ dispatch }) => {
   try {
-    const { email, fullname, username } = await getUser()
-    dispatch('setUser', { email, fullname, username })
+    const { email, fullname, username, _id } = await getUser()
+    dispatch('setUser', { email, fullname, username, _id })
   } catch (error) {
     // Process failure, delete the token
     dispatch('setToken', '')

@@ -2,7 +2,8 @@ export default {
   user: {
     username: '',
     email: '',
-    name: ''
+    name: '',
+    _id: ''
   },
   token: ''
 }
