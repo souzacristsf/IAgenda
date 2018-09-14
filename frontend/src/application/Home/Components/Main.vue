@@ -11,21 +11,21 @@
           v-model="selSchedule"
           label="Selecione a Agenda"
           single-line
-          light="true"
           auto
           prepend-icon="schedule"
           hide-details
+          @change="loadEvent"
         >
         </v-select>
       </v-container>
     </v-flex>
-    <my-table @compromisso="setCompromisso" />
+    <my-table @compromisso="setCompromisso" :items="items"/>
   </v-flex>
 </v-layout>
 </template>
 <script>
 import DataPicker from '../../Shared/Components/DataPicker'
-import MyTable from '../../Shared/Components/Table'
+import MyTable from './ListEvent'
 import {mapGetters} from 'vuex'
 import {getMySchedule} from '../services'
 
@@ -38,7 +38,9 @@ export default {
   data: () => ({
     arrayEvents: [],
     mySchendule: [],
-    selSchedule: ''
+    schedule: [],
+    selSchedule: '',
+    items: []
   }),
   computed: {
     ...mapGetters([
@@ -57,8 +59,24 @@ export default {
       getMySchedule(this.getIdUser)
         .then(({schedule}) => {
           console.log('schedule: ', schedule)
+          this.schedule = schedule
           this.mySchendule = schedule.map(s => s.name)
         })
+    },
+    loadEvent (name) {
+      this.items = this.schedule
+        .filter(e => e.name === name)
+        .map(e => e.event)[0]
+        .map(item =>
+        ({
+          evento: item.name,
+          sobre: item.description,
+          dataInicial: new Date(item.date_initial),
+          dataFim: new Date(item.date_end)
+        }))
+
+      // console.log('event: ', name, this.schedule)
+      console.log('event escolhido : ', this.items)
     }
   }
 }
