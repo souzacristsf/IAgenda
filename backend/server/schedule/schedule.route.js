@@ -10,7 +10,13 @@ const router = express.Router(); // eslint-disable-line new-cap
 router.route('/')
   .post(validate(paramValidation.create), scheduleCtrl.create);
 
-router.route('/:user_id')
+router.route('/me/:user_id')
   .get(scheduleCtrl.getMySchedule);
+
+router.route('/:_id')
+  .put(scheduleCtrl.update);
+
+router.route('/:_id/event/:id_event')
+  .delete(scheduleCtrl.remove);
 
 module.exports = router;

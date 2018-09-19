@@ -33,4 +33,34 @@ function getMySchedule(req, res, next) {
   console.log('_id: ', _id, 'user_id: ', user_id);
 }
 
-module.exports = { create, getMySchedule };
+function update(req, res, next) {
+  const { _id } = req.params;
+  const { _id: user_id } = req.user;
+  const { name, description, date_initial, date_end, shared_user_id } = req.body;
+
+  console.log('Entrou no update: ', _id);
+  console.log('Entrou no update user_id: ', user_id);
+  console.log('Entrou no update body: ', req.body);
+  Schedule.update(
+    { _id, user_id },
+    { $push: { event: { name, description, date_initial, date_end } } }
+  )
+    .then(schedule => res.json({ schedule }))
+    .catch(e => next(e));
+}
+
+function remove(req, res, next) {
+  const { _id, id_event } = req.params;
+  const { _id: user_id } = req.user;
+
+  console.log('Entrou no delete: ', _id, id_event);
+  console.log('Entrou no delete user_id: ', user_id);
+  Schedule.update(
+    { _id, user_id },
+    { $pull: { event: { _id: id_event } } }
+  )
+    .then(schedule => res.json({ schedule }))
+    .catch(e => next(e));
+}
+
+module.exports = { create, getMySchedule, update, remove };

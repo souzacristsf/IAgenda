@@ -19,10 +19,10 @@
         :search="search"
       >
         <template slot="items" slot-scope="props">
-          <td>{{ props.item.evento }}</td>
-          <td class="text-xs-left">{{ props.item.sobre }}</td>
-          <td class="text-xs-left">{{ props.item.dataInicial.toLocaleString() }}</td>
-          <td class="text-xs-left">{{ props.item.dataFim.toLocaleString() }}</td>
+          <td>{{ props.item.name }}</td>
+          <td class="text-xs-left">{{ props.item.description }}</td>
+          <td class="text-xs-left">{{ props.item.date_initial.toLocaleString() }}</td>
+          <td class="text-xs-left">{{ props.item.date_end.toLocaleString() }}</td>
           <td class="justify-center layout px-0">
             <v-btn icon class="mx-0" @click="editItem(props.item)">
               <v-icon color="teal">edit</v-icon>
@@ -36,8 +36,13 @@
           Pesquisa para "{{ search }}" sem resultados.
         </v-alert>
         <template slot="no-data">
-          <v-btn color="primary" @click="initialize">Reset</v-btn>
+          <v-alert :value="true" color="error" icon="warning">
+            Sem evento :(
+          </v-alert>
         </template>
+        <!-- <template slot="no-data">
+          <v-btn color="primary" @click="initialize">Reset</v-btn>
+        </template> -->
       </v-data-table>
     </v-card>
     <v-container>
@@ -51,16 +56,16 @@
               <v-container grid-list-md>
                 <v-layout wrap>
                   <v-flex xs12 sm6 md4>
-                    <v-text-field label="Evento" v-model="editedItem.evento"></v-text-field>
+                    <v-text-field label="Evento" v-model="editedItem.name"></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm6 md4>
-                    <v-text-field label="Sobre" v-model="editedItem.sobre"></v-text-field>
+                    <v-text-field label="Sobre" v-model="editedItem.description"></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm6 md4>
-                    <v-text-field type="date" label="Data Inicio" v-model="editedItem.dataInicial"></v-text-field>
+                    <v-text-field type="date" label="Data Inicio" v-model="editedItem.date_initial"></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm6 md4>
-                    <v-text-field type="date" label="Data Fim" v-model="editedItem.dataFim"></v-text-field>
+                    <v-text-field type="date" label="Data Fim" v-model="editedItem.date_end"></v-text-field>
                   </v-flex>
                   <!-- <v-flex xs12 sm6 md4>
                     <v-text-field label="Protein (g)" v-model="editedItem.protein"></v-text-field>
@@ -74,10 +79,10 @@
               <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
             </v-card-actions>
           </v-card>
-          <v-btn v-if="items.lenght > 0" fab color="primary" slot="activator">
-            <v-icon dark>add</v-icon>
-          </v-btn>
         </v-dialog>
+        <v-btn v-if="!!id" fab color="primary" @click="dialog=true">
+          <v-icon dark>add</v-icon>
+        </v-btn>
       </v-flex>
     </v-container>
   </div>
@@ -89,6 +94,9 @@
       items: {
         type: Array,
         default: () => []
+      },
+      id: {
+        type: String
       }
     },
     data: () => ({
@@ -99,35 +107,35 @@
           text: 'Evento',
           align: 'left',
           sortable: false,
-          value: 'evento'
+          value: 'name'
         },
         {
           text: 'Sobre',
           align: 'left',
-          value: 'sobre'
+          value: 'description'
         },
         {
           text: 'Data Inicial',
-          value: 'dataInicial'
+          value: 'date_initial'
         },
         {
           text: 'Data Final',
-          value: 'dataFim'
+          value: 'date_end'
         }
       ],
       // items: [],
       editedIndex: -1,
       editedItem: {
-        evento: '',
-        sobre: '',
-        dataInicial: '',
-        dataFim: ''
+        name: '',
+        description: '',
+        date_initial: '',
+        date_end: ''
       },
       defaultItem: {
-        evento: '',
-        sobre: '',
-        dataInicial: '',
-        dataFim: ''
+        name: '',
+        description: '',
+        date_initial: '',
+        date_end: ''
       }
     }),
 
@@ -148,44 +156,44 @@
     },
 
     methods: {
-      initialize () {
-        this.items = [
-          {
-            evento: 'Trabalho',
-            sobre: 'Reunião',
-            dataInicial: new Date(),
-            dataFim: new Date()
-          },
-          {
-            evento: 'Trabalho',
-            sobre: 'Ensinar o estag',
-            dataInicial: new Date(),
-            dataFim: new Date()
-          },
-          {
-            evento: 'Trabalho',
-            sobre: 'Matar o Chefe',
-            dataInicial: new Date(),
-            dataFim: new Date()
-          },
-          {
-            evento: 'Futbol',
-            sobre: 'Jogar uma pelada',
-            dataInicial: new Date(),
-            dataFim: new Date()
-          },
-          {
-            evento: 'Faculdade',
-            sobre: 'Fazer Trabalho',
-            dataInicial: new Date(),
-            dataFim: new Date()
-          }
-        ]
-        this.setCompromisso()
-      },
+      // initialize () {
+        // this.items = [
+        //   {
+        //     evento: 'Trabalho',
+        //     sobre: 'Reunião',
+        //     dataInicial: new Date(),
+        //     dataFim: new Date()
+        //   },
+        //   {
+        //     evento: 'Trabalho',
+        //     sobre: 'Ensinar o estag',
+        //     dataInicial: new Date(),
+        //     dataFim: new Date()
+        //   },
+        //   {
+        //     evento: 'Trabalho',
+        //     sobre: 'Matar o Chefe',
+        //     dataInicial: new Date(),
+        //     dataFim: new Date()
+        //   },
+        //   {
+        //     evento: 'Futbol',
+        //     sobre: 'Jogar uma pelada',
+        //     dataInicial: new Date(),
+        //     dataFim: new Date()
+        //   },
+        //   {
+        //     evento: 'Faculdade',
+        //     sobre: 'Fazer Trabalho',
+        //     dataInicial: new Date(),
+        //     dataFim: new Date()
+        //   }
+        // ]
+      //   this.setCompromisso()
+      // },
       setCompromisso () {
         const compromissos = this.items
-          .map(item => item.dataInicial.toISOString().substr(0, 10))
+          .map(item => item.date_initial.toISOString().substr(0, 10))
         this.$emit('compromisso', compromissos)
       },
       editItem (item) {
@@ -197,7 +205,9 @@
 
       deleteItem (item) {
         const index = this.items.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.items.splice(index, 1)
+
+        confirm('Gostaria de deletar esse evento? ') && this.items.splice(index, 1) && this.$emit('delEvent', {_id: this.id, id_event: item._id})
+        // this.items.splice(index, 1)
       },
 
       close () {
@@ -213,23 +223,24 @@
           Object.assign(this.items[this.editedIndex], this.editedItem)
           console.log('this.editedIndex: ', this.editedIndex)
         } else {
-          const dtIncio = new Date(this.editedItem.dataInicial)
-          const dtFim = new Date(this.editedItem.dataFim)
+          const dtIncio = new Date(this.editedItem.date_initial)
+          const dtFim = new Date(this.editedItem.date_end)
           const novoEvento = {
-            evento: this.editedItem.evento,
-            sobre: this.editedItem.sobre,
-            dataInicial: new Date(
+            _id: this.id,
+            name: this.editedItem.name,
+            description: this.editedItem.description,
+            date_initial: new Date(
               dtIncio.getFullYear(),
               dtIncio.getMonth(),
               dtIncio.getDate() + 1
             ),
-            dataFim: new Date(
+            date_end: new Date(
               dtFim.getFullYear(),
               dtFim.getMonth(),
               dtFim.getDate() + 1
             )
           }
-          console.log('novoEvento: ', novoEvento)
+          this.$emit('newEvent', novoEvento)
           this.items.push(novoEvento)
         }
         this.close()

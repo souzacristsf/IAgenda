@@ -1,7 +1,7 @@
 <template>
 <v-layout row wrap>
   <v-flex md3>
-    <data-picker :myEvents="arrayEvents"/>
+    <data-picker :myEvents="arrayEvents" />
   </v-flex>
   <v-flex md9 >
     <v-flex xs12 sm4 offset-sm3>
@@ -19,7 +19,19 @@
         </v-select>
       </v-container>
     </v-flex>
-    <my-table @compromisso="setCompromisso" :items="items"/>
+    <v-alert
+        :value="alert"
+        type="success"
+        transition="scale-transition"
+      >
+        {{msg}}
+      </v-alert>
+    <my-table
+      @compromisso="setCompromisso"
+      @newEvent="createNewEvent"
+      @delEvent="deleteEvent"
+      :items="items"
+      :id="id"/>
   </v-flex>
 </v-layout>
 </template>
@@ -27,7 +39,7 @@
 import DataPicker from '../../Shared/Components/DataPicker'
 import MyTable from './ListEvent'
 import {mapGetters} from 'vuex'
-import {getMySchedule} from '../services'
+import {getMySchedule, createEvent, deleteEvent} from '../services'
 
 export default {
   name: 'main-home',
@@ -41,7 +53,9 @@ export default {
     schedule: [],
     selSchedule: '',
     items: [],
-    _id: ''
+    id: '',
+    alert: false,
+    msg: ''
   }),
   computed: {
     ...mapGetters([
@@ -56,6 +70,42 @@ export default {
       this.arrayEvents = events
       // console.log('eventos: ', this.arrayEvents)
     },
+    createNewEvent (event) {
+      createEvent(event)
+        .then(data => {
+          console.log('Deu certo: ', data)
+          this.alert = true
+          this.msg = 'Evento criado com sucesso!!!.'
+          setTimeout(() => {
+            this.alert = false
+          }, 2000)
+        })
+        .catch(err => {
+          this.alert = true
+          this.msg = err.response.data.message
+          setTimeout(() => {
+            this.alert = false
+          }, 2000)
+        })
+    },
+    deleteEvent (id) {
+      deleteEvent(id)
+        .then(data => {
+          console.log('evento deletado: ', data)
+          this.alert = true
+          this.msg = 'Evento deletado com sucesso!!!.'
+          setTimeout(() => {
+            this.alert = false
+          }, 2000)
+        })
+        .catch(err => {
+          this.alert = true
+          this.msg = err.response.data.message
+          setTimeout(() => {
+            this.alert = false
+          }, 2000)
+        })
+    },
     loadMySchedule () {
       getMySchedule(this.getIdUser)
         .then(({schedule}) => {
@@ -68,18 +118,19 @@ export default {
       this.items = this.schedule
         .filter(e => e.name === name)
         .map(e => {
-          this._id = e._id
+          this.id = e._id
           return e.event
         })[0]
         .map(item =>
         ({
-          evento: item.name,
-          sobre: item.description,
-          dataInicial: new Date(item.date_initial),
-          dataFim: new Date(item.date_end)
+          _id: item._id,
+          name: item.name,
+          description: item.description,
+          date_initial: new Date(item.date_initial),
+          date_end: new Date(item.date_end)
         }))
 
-      console.log('this._id: ', this._id)
+      console.log('this._id: ', this.id)
       console.log('event escolhido : ', this.items)
     }
   }
