@@ -47,36 +47,140 @@
     </v-card>
     <v-container>
       <v-flex offset-sm11>
-        <v-dialog v-model="dialog" max-width="600px">
+        <v-dialog v-model="dialog" max-width="800px">
           <v-card>
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
             </v-card-title>
             <v-card-text>
               <v-container grid-list-md>
+                {{$v.$invalid}}
+                <!-- <v-form> -->
                 <v-layout wrap>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field label="Evento" v-model="editedItem.name"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field label="Sobre" v-model="editedItem.description"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field type="date" label="Data Inicio" v-model="editedItem.date_initial"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field type="date" label="Data Fim" v-model="editedItem.date_end"></v-text-field>
-                  </v-flex>
+                    <v-flex xs12 sm6 md6>
+                      <v-text-field label="Evento" prepend-icon="description" required v-model="editedItem.name"></v-text-field>
+                    </v-flex>
+                    <v-flex xs12 sm6 md6>
+                      <v-text-field label="Sobre" prepend-icon="description" required v-model="editedItem.description"></v-text-field>
+                    </v-flex>
+                    <v-flex xs12 sm6 md6>
+                      <!-- <v-text-field type="date" required label="Data Inicio" v-model="editedItem.date_initial"></v-text-field> -->
+                      <v-menu
+                        ref="menuInicio"
+                        :close-on-content-click="false"
+                        v-model="menuInicio"
+                        :nudge-right="40"
+                        :return-value.sync="dateInicio"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px">
+                        <v-text-field
+                          slot="activator"
+                          v-model="editedItem.date_initial"
+                          label="Data Inicio"
+                          required
+                          prepend-icon="event"
+                          readonly
+                        ></v-text-field>
+                        <v-date-picker v-model="editedItem.date_initial" no-title scrollable>
+                          <v-spacer></v-spacer>
+                          <v-btn flat color="primary" @click="menuInicio = false">Cancel</v-btn>
+                          <v-btn flat color="primary" @click="$refs.menuInicio.save(editedItem.date_initial)">OK</v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                      <v-dialog
+                          ref="menuTimeInicio"
+                          v-model="menuTimeI"
+                          :return-value.sync="timeInicio"
+                          persistent
+                          lazy
+                          full-width
+                          width="290px">
+                          <v-text-field
+                            slot="activator"
+                            v-model="timeInicio"
+                            label="Hora Inicial"
+                            required
+                            prepend-icon="access_time"
+                            readonly
+                          ></v-text-field>
+                          <v-time-picker
+                            v-if="menuTimeI"
+                            v-model="timeInicio"
+                          >
+                            <v-spacer></v-spacer>
+                            <v-btn flat color="primary" @click="menuTimeI = false">Cancel</v-btn>
+                            <v-btn flat color="primary" @click="$refs.menuTimeInicio.save(timeInicio)">OK</v-btn>
+                          </v-time-picker>
+                        </v-dialog>
+                      <!-- </v-flex> -->
+                    </v-flex>
+                    <v-flex xs12 sm6 md6>
+                      <!-- <v-text-field type="date" required label="Data Fim" v-model="editedItem.date_end"></v-text-field> -->
+                      <v-menu
+                        ref="menuFim"
+                        :close-on-content-click="false"
+                        v-model="menuFim"
+                        :nudge-right="40"
+                        :return-value.sync="dateFim"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px">
+                        <v-text-field
+                          slot="activator"
+                          v-model="editedItem.date_end"
+                          label="Data Fim"
+                          required
+                          prepend-icon="event"
+                          readonly
+                        ></v-text-field>
+                        <v-date-picker v-model="editedItem.date_end" no-title scrollable>
+                          <v-spacer></v-spacer>
+                          <v-btn flat color="primary" @click="menuFim = false">Cancel</v-btn>
+                          <v-btn flat color="primary" @click="$refs.menuFim.save(editedItem.date_end)">OK</v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                      <v-dialog
+                          ref="menuTimeFim"
+                          v-model="menuTimeF"
+                          :return-value.sync="timeFim"
+                          persistent
+                          lazy
+                          full-width
+                          width="290px">
+                          <v-text-field
+                            slot="activator"
+                            v-model="timeFim"
+                            label="Hora Final"
+                            required
+                            prepend-icon="access_time"
+                            readonly
+                          ></v-text-field>
+                          <v-time-picker
+                            v-if="menuTimeF"
+                            v-model="timeFim"
+                          >
+                            <v-spacer></v-spacer>
+                            <v-btn flat color="primary" @click="menuTimeF = false">Cancel</v-btn>
+                            <v-btn flat color="primary" @click="$refs.menuTimeFim.save(timeFim)">OK</v-btn>
+                          </v-time-picker>
+                        </v-dialog>
+                    </v-flex>
+                      </v-layout>
+                    <!-- </v-form> -->
                   <!-- <v-flex xs12 sm6 md4>
                     <v-text-field label="Protein (g)" v-model="editedItem.protein"></v-text-field>
                   </v-flex> -->
-                </v-layout>
               </v-container>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
+              <v-btn color="blue darken-1" :disabled="$v.$invalid" flat @click.native="save">Save</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -88,6 +192,7 @@
   </div>
 </template>
 <script>
+  import { required } from 'vuelidate/lib/validators'
   export default {
     name: 'my-table',
     props: {
@@ -102,6 +207,16 @@
     data: () => ({
       search: '',
       dialog: false,
+      dateInicio: '',
+      dateFim: '',
+      menuTimeInicio: false,
+      menuTimeI: '',
+      menuTimeFim: false,
+      menuTimeF: '',
+      timeInicio: null,
+      timeFim: null,
+      menuInicio: false,
+      menuFim: false,
       headers: [
         {
           text: 'Evento',
@@ -138,7 +253,28 @@
         date_end: ''
       }
     }),
-
+    validations: {
+      editedItem: {
+        name: {
+          required
+        },
+        description: {
+          required
+        },
+        date_initial: {
+          required
+        },
+        date_end: {
+          required
+        }
+      },
+      timeInicio: {
+        required
+      },
+      timeFim: {
+        required
+      }
+    },
     computed: {
       formTitle () {
         return this.editedIndex === -1 ? 'Novo Evento' : 'Editar Evento'
@@ -197,10 +333,14 @@
         this.$emit('compromisso', compromissos)
       },
       editItem (item) {
-        this.editedIndex = this.items.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-        this.setCompromisso()
+        if (!this.$v.$invalid) {
+          this.editedIndex = this.items.indexOf(item)
+          this.editedItem = Object.assign({}, item)
+          this.dialog = true
+          this.setCompromisso()
+        } else {
+          this.$v.$touch()
+        }
       },
 
       deleteItem (item) {
@@ -223,25 +363,29 @@
           Object.assign(this.items[this.editedIndex], this.editedItem)
           console.log('this.editedIndex: ', this.editedIndex)
         } else {
-          const dtIncio = new Date(this.editedItem.date_initial)
-          const dtFim = new Date(this.editedItem.date_end)
-          const novoEvento = {
-            _id: this.id,
-            name: this.editedItem.name,
-            description: this.editedItem.description,
-            date_initial: new Date(
-              dtIncio.getFullYear(),
-              dtIncio.getMonth(),
-              dtIncio.getDate() + 1
-            ),
-            date_end: new Date(
-              dtFim.getFullYear(),
-              dtFim.getMonth(),
-              dtFim.getDate() + 1
-            )
+          if (!this.$v.$invalid) {
+            const dtIncio = new Date(this.editedItem.date_initial)
+            const dtFim = new Date(this.editedItem.date_end)
+            const novoEvento = {
+              _id: this.id,
+              name: this.editedItem.name,
+              description: this.editedItem.description,
+              date_initial: new Date(
+                dtIncio.getFullYear(),
+                dtIncio.getMonth(),
+                dtIncio.getDate() + 1
+              ),
+              date_end: new Date(
+                dtFim.getFullYear(),
+                dtFim.getMonth(),
+                dtFim.getDate() + 1
+              )
+            }
+            this.$emit('newEvent', novoEvento)
+            this.items.push(novoEvento)
+          } else {
+            this.$v.$touch()
           }
-          this.$emit('newEvent', novoEvento)
-          this.items.push(novoEvento)
         }
         this.close()
         this.setCompromisso()

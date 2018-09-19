@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
+import Vuelidate from 'vuelidate'
 import {
   Vuetify,
   VApp,
@@ -11,6 +12,7 @@ import {
   VFooter,
   VList,
   VCard,
+  VTimePicker,
   VDatePicker,
   VDataTable,
   VTextField,
@@ -24,10 +26,12 @@ import {
   VAlert,
   VToolbar,
   transitions,
-  VProgressLinear
+  VProgressLinear,
+  VMenu
 } from 'vuetify'
 import '../node_modules/vuetify/src/stylus/app.styl'
 
+Vue.use(Vuelidate)
 Vue.use(Vuetify, {
   components: {
     VApp,
@@ -35,6 +39,7 @@ Vue.use(Vuetify, {
     VFooter,
     VList,
     VCard,
+    VTimePicker,
     VDatePicker,
     VDataTable,
     VTextField,
@@ -48,7 +53,8 @@ Vue.use(Vuetify, {
     VAlert,
     VToolbar,
     transitions,
-    VProgressLinear
+    VProgressLinear,
+    VMenu
   },
   theme: {
     primary: '#2196f3',
