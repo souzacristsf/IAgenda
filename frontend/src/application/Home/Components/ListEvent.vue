@@ -74,7 +74,7 @@
               <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
             </v-card-actions>
           </v-card>
-          <v-btn fab color="primary" slot="activator">
+          <v-btn v-if="items.lenght > 0" fab color="primary" slot="activator">
             <v-icon dark>add</v-icon>
           </v-btn>
         </v-dialog>
@@ -211,6 +211,7 @@
       save () {
         if (this.editedIndex > -1) {
           Object.assign(this.items[this.editedIndex], this.editedItem)
+          console.log('this.editedIndex: ', this.editedIndex)
         } else {
           const dtIncio = new Date(this.editedItem.dataInicial)
           const dtFim = new Date(this.editedItem.dataFim)
@@ -228,6 +229,7 @@
               dtFim.getDate() + 1
             )
           }
+          console.log('novoEvento: ', novoEvento)
           this.items.push(novoEvento)
         }
         this.close()

@@ -40,7 +40,8 @@ export default {
     mySchendule: [],
     schedule: [],
     selSchedule: '',
-    items: []
+    items: [],
+    _id: ''
   }),
   computed: {
     ...mapGetters([
@@ -53,12 +54,12 @@ export default {
   methods: {
     setCompromisso (events) {
       this.arrayEvents = events
-      console.log('eventos: ', this.arrayEvents)
+      // console.log('eventos: ', this.arrayEvents)
     },
     loadMySchedule () {
       getMySchedule(this.getIdUser)
         .then(({schedule}) => {
-          console.log('schedule: ', schedule)
+          // console.log('schedule: ', schedule)
           this.schedule = schedule
           this.mySchendule = schedule.map(s => s.name)
         })
@@ -66,7 +67,10 @@ export default {
     loadEvent (name) {
       this.items = this.schedule
         .filter(e => e.name === name)
-        .map(e => e.event)[0]
+        .map(e => {
+          this._id = e._id
+          return e.event
+        })[0]
         .map(item =>
         ({
           evento: item.name,
@@ -75,7 +79,7 @@ export default {
           dataFim: new Date(item.date_end)
         }))
 
-      // console.log('event: ', name, this.schedule)
+      console.log('this._id: ', this._id)
       console.log('event escolhido : ', this.items)
     }
   }
