@@ -116,7 +116,10 @@
             email: this.form.email,
             password: this.form.password
           })
-          .then(data => setTimeout((this.mySetVar), 4000))
+          .then(data => {
+            this.mySetVar()
+            // setTimeout((this.mySetVar), 4000))
+          })
           .catch(err => {
             console.log(err)
             this.errorAlert = true

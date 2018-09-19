@@ -73,7 +73,7 @@ export default {
     createNewEvent (event) {
       createEvent(event)
         .then(data => {
-          console.log('Deu certo: ', data)
+          this.loadMySchedule()
           this.alert = true
           this.msg = 'Evento criado com sucesso!!!.'
           setTimeout(() => {
