@@ -28,7 +28,7 @@
       </v-alert>
     <my-table
       @compromisso="setCompromisso"
-      @newEvent="createNewEvent"
+      @newEvent="submitEvent"
       @delEvent="deleteEvent"
       :items="items"
       :id="id"/>
@@ -39,7 +39,7 @@
 import DataPicker from '../../Shared/Components/DataPicker'
 import MyTable from './ListEvent'
 import {mapGetters} from 'vuex'
-import {getMySchedule, createEvent, deleteEvent} from '../services'
+import {getMySchedule, createEvent, deleteEvent, updateEvent} from '../services'
 
 export default {
   name: 'main-home',
@@ -69,6 +69,31 @@ export default {
     setCompromisso (events) {
       this.arrayEvents = events
       // console.log('eventos: ', this.arrayEvents)
+    },
+    submitEvent (event, type) {
+      if (typeof type === 'string') {
+        this.updateEvent(event)
+      } else {
+        this.createNewEvent(event)
+      }
+    },
+    updateEvent (event) {
+      updateEvent(event)
+        .then(data => {
+          this.loadMySchedule()
+          this.alert = true
+          this.msg = 'Evento atualizado com sucesso!!!.'
+          setTimeout(() => {
+            this.alert = false
+          }, 2000)
+        })
+        .catch(err => {
+          this.alert = true
+          this.msg = err.response.data.message
+          setTimeout(() => {
+            this.alert = false
+          }, 2000)
+        })
     },
     createNewEvent (event) {
       createEvent(event)

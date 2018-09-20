@@ -33,7 +33,7 @@ function getMySchedule(req, res, next) {
   console.log('_id: ', _id, 'user_id: ', user_id);
 }
 
-function update(req, res, next) {
+function updateScheduleNewEvent(req, res, next) {
   const { _id } = req.params;
   const { _id: user_id } = req.user;
   const { name, description, date_initial, date_end, shared_user_id } = req.body;
@@ -44,6 +44,29 @@ function update(req, res, next) {
   Schedule.update(
     { _id, user_id },
     { $push: { event: { name, description, date_initial, date_end } } }
+  )
+    .then(schedule => res.json({ schedule }))
+    .catch(e => next(e));
+}
+
+function updateScheduleFromEvent(req, res, next) {
+  const { _id, id_event } = req.params;
+  const { _id: user_id } = req.user;
+  const { name, description, date_initial, date_end, shared_user_id } = req.body;
+
+  console.log('Entrou no update: ', _id);
+  console.log('Entrou no update user_id: ', user_id);
+  console.log('Entrou no update body: ', req.body);
+  Schedule.update(
+    { _id, user_id, 'event._id': id_event },
+    {
+      $set: {
+        'event.$.name': name,
+        'event.$.description': description,
+        'event.$.date_initial': date_initial,
+        'event.$.date_end': date_end
+      }
+    }
   )
     .then(schedule => res.json({ schedule }))
     .catch(e => next(e));
@@ -63,4 +86,4 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { create, getMySchedule, update, remove };
+module.exports = { create, getMySchedule, updateScheduleNewEvent, remove, updateScheduleFromEvent };

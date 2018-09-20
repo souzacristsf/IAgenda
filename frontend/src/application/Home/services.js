@@ -9,6 +9,10 @@ export const createEvent = data => {
   console.log('createEvent: ', data)
   return http.put(`/api/schedule/${data._id}`, data).then(response => response.data)
 }
+export const updateEvent = data => {
+  console.log('updateEvent: ', `/api/schedule/${data._id}/event/${data.id_event}`)
+  return http.put(`/api/schedule/${data._id}/event/${data.id_event}`, data).then(response => response.data)
+}
 
 export const deleteEvent = data => {
   console.log('deleteEvent: ', data)

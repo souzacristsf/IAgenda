@@ -54,7 +54,6 @@
             </v-card-title>
             <v-card-text>
               <v-container grid-list-md>
-                {{$v.$invalid}}
                 <!-- <v-form> -->
                 <v-layout wrap>
                     <v-flex xs12 sm6 md6>
@@ -244,7 +243,8 @@
         name: '',
         description: '',
         date_initial: '',
-        date_end: ''
+        date_end: '',
+        id_event: ''
       },
       defaultItem: {
         name: '',
@@ -286,11 +286,6 @@
         val || this.close()
       }
     },
-
-    created () {
-      // this.initialize()
-    },
-
     methods: {
       // initialize () {
         // this.items = [
@@ -327,20 +322,44 @@
         // ]
       //   this.setCompromisso()
       // },
+      submitTableDateTime (d, time) {
+        // console.log('submitTableDateTime: ', d, time, typeof d)
+        const date = new Date(d)
+        const hours = time.match(/^(\d+)/)[1]
+        const minutes = time.match(/:(\d+)/)[1]
+        return new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate() + 1,
+                hours,
+                minutes
+              )
+        // date.setHours(hours)
+        // date.setMinutes(minutes)
+        // return date
+      },
       setCompromisso () {
         const compromissos = this.items
-          .map(item => item.date_initial.toISOString().substr(0, 10))
+          .map(item => new Date(item.date_initial).toISOString().substr(0, 10))
         this.$emit('compromisso', compromissos)
       },
       editItem (item) {
-        if (!this.$v.$invalid) {
-          this.editedIndex = this.items.indexOf(item)
-          this.editedItem = Object.assign({}, item)
-          this.dialog = true
-          this.setCompromisso()
-        } else {
-          this.$v.$touch()
+        // if (!this.$v.$invalid) {
+        this.editedIndex = this.items.indexOf(item)
+
+        const eItem = {
+          name: item.name,
+          description: item.description,
+          date_initial: (new Date(item.date_initial)).toISOString(),
+          date_end: (new Date(item.date_end)).toISOString(),
+          id_event: item._id
         }
+
+        this.editedItem = Object.assign({}, eItem)
+        this.dialog = true
+        // this.setCompromisso()
+        // } else {
+        //   this.$v.$touch()
       },
 
       deleteItem (item) {
@@ -360,26 +379,33 @@
 
       save () {
         if (this.editedIndex > -1) {
+          // const t = this.submitTableDateTime(this.editedItem.date_initial, this.timeInicio)
+          // console.log('Date Formatada: ', t)
+          // console.log('this.editedItem: ', this.editedItem)
+          this.editedItem.date_initial = (this.submitTableDateTime(this.editedItem.date_initial, this.timeInicio)).toISOString()
+          this.editedItem.date_end = (this.submitTableDateTime(this.editedItem.date_end, this.timeFim)).toISOString()
+          const upEvent = {
+            _id: this.id,
+            name: this.editedItem.name,
+            description: this.editedItem.description,
+            date_initial: this.editedItem.date_initial,
+            date_end: this.editedItem.date_end,
+            id_event: this.editedItem.id_event
+          }
+          // console.log('this.editedItem: ', this.editedItem)
+          // console.log('upEvent: ', upEvent)
+          this.$emit('newEvent', upEvent, 'uEvent')
           Object.assign(this.items[this.editedIndex], this.editedItem)
-          console.log('this.editedIndex: ', this.editedIndex)
         } else {
           if (!this.$v.$invalid) {
-            const dtIncio = new Date(this.editedItem.date_initial)
-            const dtFim = new Date(this.editedItem.date_end)
+            const dtIncio = this.submitTableDateTime(this.editedItem.date_initial, this.timeInicio)
+            const dtFim = this.submitTableDateTime(this.editedItem.date_end, this.timeFim)
             const novoEvento = {
               _id: this.id,
               name: this.editedItem.name,
               description: this.editedItem.description,
-              date_initial: new Date(
-                dtIncio.getFullYear(),
-                dtIncio.getMonth(),
-                dtIncio.getDate() + 1
-              ),
-              date_end: new Date(
-                dtFim.getFullYear(),
-                dtFim.getMonth(),
-                dtFim.getDate() + 1
-              )
+              date_initial: dtIncio,
+              date_end: dtFim
             }
             this.$emit('newEvent', novoEvento)
             this.items.push(novoEvento)
@@ -388,7 +414,7 @@
           }
         }
         this.close()
-        this.setCompromisso()
+        // this.setCompromisso()
       }
     }
   }
