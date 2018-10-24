@@ -115,7 +115,7 @@ UserSchema.statics = {
     // console.log('Teste user: ', error)
     if (error.name === 'MongoError' && error.code === 11000) {
       // console.log('MongoError: ', error)
-      return new APIError('username or e-mail already exists', httpStatus.CONFLICT, true);
+      return new APIError('Username ou E-mail já cadastrado!!!', httpStatus.CONFLICT, true);
       // return Promise.reject(err)
     }
 

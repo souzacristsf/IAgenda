@@ -106,9 +106,9 @@
         'autoLogin'
       ]),
       submit () {
-        console.log('Entrou no submit')
+        // console.log('Entrou no submit')
         if (this.$refs.form.validate()) {
-          console.log('Entrou Aqui: ', this.form)
+          // console.log('Entrou Aqui: ', this.form)
           this.dialog = true
           // Native form submission is not yet supported
           // axios.post('https://iagenda.herokuapp.com/api/users', {
@@ -126,13 +126,13 @@
             this.mySetVar()
             this.autoLogin({user, token})
             .then((data) => {
-              console.log('Dados: ', data)
+              // console.log('Dados: ', data)
               this.$router.push('/home')
             })
             // setTimeout((this.mySetVar), 4000))
           })
           .catch(err => {
-            console.log(err)
+            setTimeout(() => (this.dialog = false), 1000)
             this.errorAlert = true
             this.msg = err.response.data.message
           })

@@ -23,6 +23,54 @@
           <td class="text-xs-left">{{ props.item.description }}</td>
           <td class="text-xs-left">{{ props.item.date_initial.toLocaleString() }}</td>
           <td class="text-xs-left">{{ props.item.date_end.toLocaleString() }}</td>
+          <td class="text-xs-left">
+            <v-flex>
+              <v-autocomplete
+                v-model="friends"
+                :disabled="isUpdating"
+                :items="people"
+                box
+                chips
+                color="blue-grey lighten-2"
+                item-text="name"
+                item-value="name"
+                multiple>
+                <template
+                  slot="selection"
+                  slot-scope="data"
+                >
+                  <v-chip
+                    :selected="data.selected"
+                    close
+                    class="chip--select-multi"
+                    @input="remove(data.item)"
+                  >
+                    <v-avatar>
+                      <img :src="data.item.avatar">
+                    </v-avatar>
+                    {{ data.item.name }}
+                  </v-chip>
+                </template>
+                <template
+                  slot="item"
+                  slot-scope="data"
+                >
+                  <template v-if="typeof data.item !== 'object'">
+                    <v-list-tile-content v-text="data.item"></v-list-tile-content>
+                  </template>
+                  <template v-else>
+                    <v-list-tile-avatar>
+                      <img :src="data.item.avatar">
+                    </v-list-tile-avatar>
+                    <v-list-tile-content>
+                      <v-list-tile-title v-html="data.item.name"></v-list-tile-title>
+                      <v-list-tile-sub-title v-html="data.item.group"></v-list-tile-sub-title>
+                    </v-list-tile-content>
+                  </template>
+                </template>
+              </v-autocomplete>
+            </v-flex>
+          </td>
           <td class="justify-center layout px-0">
             <v-btn icon class="mx-0" @click="editItem(props.item)">
               <v-icon color="teal">edit</v-icon>
@@ -56,120 +104,168 @@
               <v-container grid-list-md>
                 <!-- <v-form> -->
                 <v-layout wrap>
-                    <v-flex xs12 sm6 md6>
-                      <v-text-field label="Evento" prepend-icon="description" required v-model="editedItem.name"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm6 md6>
-                      <v-text-field label="Sobre" prepend-icon="description" required v-model="editedItem.description"></v-text-field>
-                    </v-flex>
-                    <v-flex xs12 sm6 md6>
-                      <!-- <v-text-field type="date" required label="Data Inicio" v-model="editedItem.date_initial"></v-text-field> -->
-                      <v-menu
-                        ref="menuInicio"
-                        :close-on-content-click="false"
-                        v-model="menuInicio"
-                        :nudge-right="40"
-                        :return-value.sync="dateInicio"
+                  <v-flex xs12 sm6 md6>
+                    <v-text-field label="Evento" prepend-icon="description" required v-model="editedItem.name"></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6 md6>
+                    <v-text-field label="Sobre" prepend-icon="description" required v-model="editedItem.description"></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6 md6>
+                    <!-- <v-text-field type="date" required label="Data Inicio" v-model="editedItem.date_initial"></v-text-field> -->
+                    <v-menu
+                      ref="menuInicio"
+                      :close-on-content-click="false"
+                      v-model="menuInicio"
+                      :nudge-right="40"
+                      :return-value.sync="dateInicio"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      min-width="290px">
+                      <v-text-field
+                        slot="activator"
+                        v-model="editedItem.date_initial"
+                        label="Data Inicio"
+                        required
+                        prepend-icon="event"
+                        readonly
+                      ></v-text-field>
+                      <v-date-picker v-model="editedItem.date_initial" no-title scrollable>
+                        <v-spacer></v-spacer>
+                        <v-btn flat color="primary" @click="menuInicio = false">Cancel</v-btn>
+                        <v-btn flat color="primary" @click="$refs.menuInicio.save(editedItem.date_initial)">OK</v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                    <v-dialog
+                        ref="menuTimeInicio"
+                        v-model="menuTimeI"
+                        :return-value.sync="timeInicio"
+                        persistent
                         lazy
-                        transition="scale-transition"
-                        offset-y
                         full-width
-                        min-width="290px">
+                        width="290px">
                         <v-text-field
                           slot="activator"
-                          v-model="editedItem.date_initial"
-                          label="Data Inicio"
+                          v-model="timeInicio"
+                          label="Hora Inicial"
                           required
-                          prepend-icon="event"
+                          prepend-icon="access_time"
                           readonly
                         ></v-text-field>
-                        <v-date-picker v-model="editedItem.date_initial" no-title scrollable>
+                        <v-time-picker
+                          v-if="menuTimeI"
+                          v-model="timeInicio"
+                        >
                           <v-spacer></v-spacer>
-                          <v-btn flat color="primary" @click="menuInicio = false">Cancel</v-btn>
-                          <v-btn flat color="primary" @click="$refs.menuInicio.save(editedItem.date_initial)">OK</v-btn>
-                        </v-date-picker>
-                      </v-menu>
-                      <v-dialog
-                          ref="menuTimeInicio"
-                          v-model="menuTimeI"
-                          :return-value.sync="timeInicio"
-                          persistent
-                          lazy
-                          full-width
-                          width="290px">
-                          <v-text-field
-                            slot="activator"
-                            v-model="timeInicio"
-                            label="Hora Inicial"
-                            required
-                            prepend-icon="access_time"
-                            readonly
-                          ></v-text-field>
-                          <v-time-picker
-                            v-if="menuTimeI"
-                            v-model="timeInicio"
-                          >
-                            <v-spacer></v-spacer>
-                            <v-btn flat color="primary" @click="menuTimeI = false">Cancel</v-btn>
-                            <v-btn flat color="primary" @click="$refs.menuTimeInicio.save(timeInicio)">OK</v-btn>
-                          </v-time-picker>
-                        </v-dialog>
-                      <!-- </v-flex> -->
-                    </v-flex>
-                    <v-flex xs12 sm6 md6>
-                      <!-- <v-text-field type="date" required label="Data Fim" v-model="editedItem.date_end"></v-text-field> -->
-                      <v-menu
-                        ref="menuFim"
-                        :close-on-content-click="false"
-                        v-model="menuFim"
-                        :nudge-right="40"
-                        :return-value.sync="dateFim"
+                          <v-btn flat color="primary" @click="menuTimeI = false">Cancel</v-btn>
+                          <v-btn flat color="primary" @click="$refs.menuTimeInicio.save(timeInicio)">OK</v-btn>
+                        </v-time-picker>
+                      </v-dialog>
+                    <!-- </v-flex> -->
+                  </v-flex>
+                  <v-flex xs12 sm6 md6>
+                    <!-- <v-text-field type="date" required label="Data Fim" v-model="editedItem.date_end"></v-text-field> -->
+                    <v-menu
+                      ref="menuFim"
+                      :close-on-content-click="false"
+                      v-model="menuFim"
+                      :nudge-right="40"
+                      :return-value.sync="dateFim"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      min-width="290px">
+                      <v-text-field
+                        slot="activator"
+                        v-model="editedItem.date_end"
+                        label="Data Fim"
+                        required
+                        prepend-icon="event"
+                        readonly
+                      ></v-text-field>
+                      <v-date-picker v-model="editedItem.date_end" no-title scrollable>
+                        <v-spacer></v-spacer>
+                        <v-btn flat color="primary" @click="menuFim = false">Cancel</v-btn>
+                        <v-btn flat color="primary" @click="$refs.menuFim.save(editedItem.date_end)">OK</v-btn>
+                      </v-date-picker>
+                    </v-menu>
+                    <v-dialog
+                        ref="menuTimeFim"
+                        v-model="menuTimeF"
+                        :return-value.sync="timeFim"
+                        persistent
                         lazy
-                        transition="scale-transition"
-                        offset-y
                         full-width
-                        min-width="290px">
+                        width="290px">
                         <v-text-field
                           slot="activator"
-                          v-model="editedItem.date_end"
-                          label="Data Fim"
+                          v-model="timeFim"
+                          label="Hora Final"
                           required
-                          prepend-icon="event"
+                          prepend-icon="access_time"
                           readonly
                         ></v-text-field>
-                        <v-date-picker v-model="editedItem.date_end" no-title scrollable>
+                        <v-time-picker
+                          v-if="menuTimeF"
+                          v-model="timeFim"
+                        >
                           <v-spacer></v-spacer>
-                          <v-btn flat color="primary" @click="menuFim = false">Cancel</v-btn>
-                          <v-btn flat color="primary" @click="$refs.menuFim.save(editedItem.date_end)">OK</v-btn>
-                        </v-date-picker>
-                      </v-menu>
-                      <v-dialog
-                          ref="menuTimeFim"
-                          v-model="menuTimeF"
-                          :return-value.sync="timeFim"
-                          persistent
-                          lazy
-                          full-width
-                          width="290px">
-                          <v-text-field
-                            slot="activator"
-                            v-model="timeFim"
-                            label="Hora Final"
-                            required
-                            prepend-icon="access_time"
-                            readonly
-                          ></v-text-field>
-                          <v-time-picker
-                            v-if="menuTimeF"
-                            v-model="timeFim"
-                          >
-                            <v-spacer></v-spacer>
-                            <v-btn flat color="primary" @click="menuTimeF = false">Cancel</v-btn>
-                            <v-btn flat color="primary" @click="$refs.menuTimeFim.save(timeFim)">OK</v-btn>
-                          </v-time-picker>
-                        </v-dialog>
-                    </v-flex>
-                      </v-layout>
+                          <v-btn flat color="primary" @click="menuTimeF = false">Cancel</v-btn>
+                          <v-btn flat color="primary" @click="$refs.menuTimeFim.save(timeFim)">OK</v-btn>
+                        </v-time-picker>
+                      </v-dialog>
+                  </v-flex>
+                  <v-flex xs12>
+                    <v-autocomplete
+                      v-model="friends"
+                      :disabled="isUpdating"
+                      :items="people"
+                      box
+                      chips
+                      color="blue-grey lighten-2"
+                      :search-input.sync="searchUsers"
+                      label="Compartilhar Evento"
+                      item-text="name"
+                      item-value="name"
+                      multiple>
+                      <template
+                        slot="selection"
+                        slot-scope="data"
+                      >
+                        <v-chip
+                          :selected="data.selected"
+                          close
+                          class="chip--select-multi"
+                          @input="remove(data.item)"
+                        >
+                          <v-avatar>
+                            <img :src="data.item.avatar">
+                          </v-avatar>
+                          {{ data.item.name }}
+                        </v-chip>
+                      </template>
+                      <template
+                        slot="item"
+                        slot-scope="data"
+                      >
+                        <template v-if="typeof data.item !== 'object'">
+                          <v-list-tile-content v-text="data.item"></v-list-tile-content>
+                        </template>
+                        <template v-else>
+                          <v-list-tile-avatar>
+                            <img :src="data.item.avatar">
+                          </v-list-tile-avatar>
+                          <v-list-tile-content>
+                            <v-list-tile-title v-html="data.item.name"></v-list-tile-title>
+                            <v-list-tile-sub-title v-html="data.item.group"></v-list-tile-sub-title>
+                          </v-list-tile-content>
+                        </template>
+                      </template>
+                    </v-autocomplete>
+                  </v-flex>
+                </v-layout>
                     <!-- </v-form> -->
                   <!-- <v-flex xs12 sm6 md4>
                     <v-text-field label="Protein (g)" v-model="editedItem.protein"></v-text-field>
@@ -216,6 +312,22 @@
       timeFim: null,
       menuInicio: false,
       menuFim: false,
+      searchUsers: null,
+      friends: ['Sandra Adams', 'Britta Holt'],
+      isUpdating: false,
+      people: [
+          { header: 'Usuarios' },
+          { name: 'Sandra Adams', group: 'Group 1', avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg' },
+          { name: 'Ali Connors', group: 'Group 1', avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg' },
+          { name: 'Trevor Hansen', group: 'Group 1', avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg' },
+          { name: 'Tucker Smith', group: 'Group 1', avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg' }
+          // { divider: true },
+          // { header: 'Group 2' },
+          // { name: 'Britta Holt', group: 'Group 2', avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg' },
+          // { name: 'Jane Smith ', group: 'Group 2', avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg' },
+          // { name: 'John Smith', group: 'Group 2', avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg' },
+          // { name: 'Sandra Williams', group: 'Group 2', avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg' }
+      ],
       headers: [
         {
           text: 'Evento',
@@ -235,6 +347,15 @@
         {
           text: 'Data Final',
           value: 'date_end'
+        },
+        {
+          text: 'Evento Compartilhado',
+          value: 'name'
+        },
+        {
+          text: 'Ação',
+          align: 'center',
+          value: 'name'
         }
       ],
       // items: [],
@@ -284,9 +405,35 @@
     watch: {
       dialog (val) {
         val || this.close()
+      },
+      isUpdating (val) {
+        console.log('Update isUpdating')
+        if (val) {
+          setTimeout(() => (this.isUpdating = false), 3000)
+        }
+      },
+      searchUsers (val) {
+        console.log('Mandou pesquisar sim')
+        // Items have already been loaded
+        if (this.people.length > 0) return
+        // this.isLoading = true
+
+        // Lazily load input items
+        window.axios.get('https://api.coinmarketcap.com/v2/listings/')
+          .then(res => {
+            this.people = res.data.data
+          })
+          .catch(err => {
+            console.log(err)
+          })
+          // .finally(() => (this.isLoading = false))
       }
     },
     methods: {
+      remove (item) {
+        const index = this.friends.indexOf(item.name)
+        if (index >= 0) this.friends.splice(index, 1)
+      },
       // initialize () {
         // this.items = [
         //   {

@@ -11,7 +11,7 @@
           v-model="selSchedule"
           label="Selecione a Agenda"
           single-line
-          auto
+          :menu-props="{ auto: true, overflowY: true }"
           prepend-icon="schedule"
           hide-details
           @change="loadEvent"

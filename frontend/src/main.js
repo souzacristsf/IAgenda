@@ -28,7 +28,10 @@ import {
   VToolbar,
   transitions,
   VProgressLinear,
-  VMenu
+  VMenu,
+  VAutocomplete,
+  VChip,
+  VAvatar
 } from 'vuetify'
 import '../node_modules/vuetify/src/stylus/app.styl'
 
@@ -56,7 +59,10 @@ Vue.use(Vuetify, {
     VToolbar,
     transitions,
     VProgressLinear,
-    VMenu
+    VMenu,
+    VAutocomplete,
+    VChip,
+    VAvatar
   },
   theme: {
     primary: '#2196f3',
