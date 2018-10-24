@@ -64,6 +64,7 @@
 </style>
 <script>
   import MAlert from '../../Components/Alert.vue'
+  import {mapActions} from 'vuex'
   // import axios from 'axios'
   import { create } from '../services.js'
 
@@ -97,8 +98,13 @@
       dialog: false,
       msg: ''
     }),
-
+    mounted () {
+      // console.log('this.$store.dispatch: ', this.$store.dispatch)
+    },
     methods: {
+      ...mapActions([
+        'autoLogin'
+      ]),
       submit () {
         console.log('Entrou no submit')
         if (this.$refs.form.validate()) {
@@ -116,8 +122,13 @@
             email: this.form.email,
             password: this.form.password
           })
-          .then(data => {
+          .then(({user, token}) => {
             this.mySetVar()
+            this.autoLogin({user, token})
+            .then((data) => {
+              console.log('Dados: ', data)
+              this.$router.push('/home')
+            })
             // setTimeout((this.mySetVar), 4000))
           })
           .catch(err => {

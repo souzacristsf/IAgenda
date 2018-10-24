@@ -31,7 +31,7 @@
           label="Compartilhar"
           v-model="checkbox"
         ></v-checkbox>
-        <v-btn @click="submit" color="info">Criar</v-btn>
+        <v-btn @click="submit" color="info" :disabled="!name">Criar</v-btn>
         <v-btn @click="clear">Cancelar</v-btn>
       </v-form>
       </v-container>
@@ -119,7 +119,8 @@ export default {
     //   this.checkbox = false
     // },
     clear () {
-      this.$refs.form.reset()
+      this.name = ' '
+      // this.$refs.form.reset()
     }
   }
 }

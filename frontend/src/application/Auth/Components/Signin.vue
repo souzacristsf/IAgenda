@@ -24,12 +24,12 @@
                   :rules="passwordRules"
                   required
                 ></v-text-field>
-                <v-checkbox
+                <!-- <v-checkbox
                   label="Manter conectado?"
                   v-model="checkbox"
                   :rules="[v => !!v || 'Campo Obrigatorio!']"
                   required
-                ></v-checkbox>
+                ></v-checkbox> -->
                  <v-layout row>
                   <v-flex  >
                     <v-btn
@@ -85,7 +85,7 @@
         v => (v && v.length <= 10) || 'Password até 10 carateres'
       ],
       select: null,
-      checkbox: false,
+      // checkbox: false,
       errorAlert: false,
       msg: ''
     }),

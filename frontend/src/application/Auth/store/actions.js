@@ -15,6 +15,15 @@ export const attemptLogin = ({ dispatch }, payload) => {
   })
 }
 
+export const autoLogin = ({ dispatch }, {user, token}) => {
+  console.log('Entrou aqui no autoLogin', {user, token})
+  dispatch('setUser', user)
+  dispatch('setToken', token)
+  setInitToken(token)
+  setuser({user, token})
+  return true
+}
+
 export const logout = ({ dispatch }) => {
   // call actions
   return Promise.all([

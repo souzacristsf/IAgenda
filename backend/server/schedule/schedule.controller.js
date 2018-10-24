@@ -86,4 +86,40 @@ function remove(req, res, next) {
     .catch(e => next(e));
 }
 
-module.exports = { create, getMySchedule, updateScheduleNewEvent, remove, updateScheduleFromEvent };
+function removeSchedule(req, res, next) {
+  const { _id } = req.params;
+  const { _id: user_id } = req.user;
+  Schedule.remove(
+      { _id, user_id },
+    )
+    .then(schedule => res.json({ schedule }))
+    .catch(e => next(e));
+}
+
+function updateSchedule(req, res, next) {
+  const { _id } = req.params;
+  const { _id: user_id } = req.user;
+  const { name } = req.body;
+  console.log('req.body: ', req.body)
+
+  Schedule.update(
+      { _id, user_id },
+      {
+        $set: {
+          name: name,
+        }
+      }
+    )
+    .then(schedule => res.json({ schedule }))
+    .catch(e => next(e));
+}
+
+module.exports = {
+  create,
+  getMySchedule,
+  updateScheduleNewEvent,
+  remove,
+  updateScheduleFromEvent,
+  removeSchedule,
+  updateSchedule
+};

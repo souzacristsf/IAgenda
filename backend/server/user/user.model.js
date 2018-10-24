@@ -48,6 +48,12 @@ const UserSchema = new mongoose.Schema({
 UserSchema.method({
 });
 
+UserSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
+
 /**
  * Statics
  */

@@ -1,5 +1,7 @@
 const User = require('./user.model');
 const Schedule = require('../schedule/schedule.model');
+const { sign } = require('../lib/jwt');
+const { omit } = require('lodash')
 
 /**
  * Load user and append to req.
@@ -44,20 +46,23 @@ async function createSchedule(user_id, name) {
  * @returns {User}
  */
 function create(req, res, next) {
-  // console.log('entrou aqui no create user');
+  console.log('entrou aqui no create user');
   const user = new User({
     username: req.body.username,
     password: req.body.password,
     email: req.body.email
   });
+  user.token = sign(user)
   // console.log('create user:: ', user);
   // console.log('User? ', user);
   user.save()
     .then((savedUser) => {
       createSchedule(savedUser._id, savedUser.username);
-      return savedUser;
+      return user.toJSON(savedUser);
     })
-    .then(savedUser => res.json(savedUser))
+    .then(savedUser => {
+      res.json({user: omit(savedUser, ['token']), token: savedUser.token})
+    })
     .catch(e => next(User.checkDuplicate(e)));
 }
 

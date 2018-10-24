@@ -1,14 +1,11 @@
 // export const isLogged = (state) => state.token !== ''
 // import { isEmpty } from 'lodash'
 
-export const getAuthUsername = (state) => state.username
+export const getAuthUsername = (state) => state.user.username
 
-export const getAuthFullname = (state) => state.fullname
+export const getAuthFullname = (state) => state.user.fullname
 
-export const getAuthEmail = (state) => {
-  console.log('Chamou Getters')
-  return state.email
-}
+export const getAuthEmail = (state) => state.user.email
 
 export const getAuthToken = (state) => state.token
 

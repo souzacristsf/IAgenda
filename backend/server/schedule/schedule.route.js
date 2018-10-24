@@ -14,7 +14,11 @@ router.route('/me/:user_id')
   .get(scheduleCtrl.getMySchedule);
 
 router.route('/:_id')
-  .put(scheduleCtrl.updateScheduleNewEvent);
+  .put(scheduleCtrl.updateScheduleNewEvent)
+  .delete(scheduleCtrl.removeSchedule);
+
+router.route('/:_id/edit')
+.put(scheduleCtrl.updateSchedule);
 
 router.route('/:_id/event/:id_event')
   .delete(scheduleCtrl.remove)
