@@ -23,6 +23,53 @@
           <td class="text-xs-left">{{ props.item.description }}</td>
           <td class="text-xs-left">{{ props.item.date_initial.toLocaleString() }}</td>
           <td class="text-xs-left">{{ props.item.date_end.toLocaleString() }}</td>
+          <td class="text-xs-left">
+            <v-autocomplete
+              v-model="users"
+              :disabled="isUpdating"
+              :items="people"
+              @focus="findUsers(props.item)"
+              box
+              chips
+              color="blue-grey lighten-2"
+              item-text="[]"
+              item-value="[]"
+              multiple>
+              <template
+                slot="selection"
+                slot-scope="data"
+              >
+                <v-chip
+                  :selected="data.selected"
+                  close
+                  class="chip--select-multi"
+                  @input="remove(data.item)"
+                >
+                  <v-avatar>
+                    <img :src="data.item.avatar">
+                  </v-avatar>
+                  {{ data.item.name }}
+                </v-chip>
+              </template>
+              <template
+                slot="item"
+                slot-scope="data"
+              >
+                <template v-if="typeof data.item !== 'object'">
+                  <v-list-tile-content v-text="data.item"></v-list-tile-content>
+                </template>
+                <template v-else>
+                  <v-list-tile-avatar>
+                    <img :src="data.item.avatar">
+                  </v-list-tile-avatar>
+                  <v-list-tile-content>
+                    <v-list-tile-title v-html="data.item.name"></v-list-tile-title>
+                    <v-list-tile-sub-title v-html="data.item.group"></v-list-tile-sub-title>
+                  </v-list-tile-content>
+                </template>
+              </template>
+            </v-autocomplete>
+          </td>
           <td class="justify-center layout px-0">
             <v-btn icon class="mx-0" @click="editItem(props.item)">
               <v-icon color="teal">edit</v-icon>
@@ -192,6 +239,9 @@
 </template>
 <script>
   import { required } from 'vuelidate/lib/validators'
+  import {getUsers, updateEvent} from '../services.js'
+  import { omit } from 'lodash'
+  // import findUsers from './testeAuto.vue'
   export default {
     name: 'my-table',
     props: {
@@ -204,6 +254,16 @@
       }
     },
     data: () => ({
+      users: [],
+      isUpdating: false,
+      people: [],
+      srcs: [
+        'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+        'https://cdn.vuetifyjs.com/images/lists/2.jpg',
+        'https://cdn.vuetifyjs.com/images/lists/3.jpg',
+        'https://cdn.vuetifyjs.com/images/lists/4.jpg',
+        'https://cdn.vuetifyjs.com/images/lists/5.jpg'
+      ],
       search: '',
       dialog: false,
       dateInicio: '',
@@ -235,6 +295,16 @@
         {
           text: 'Data Final',
           value: 'date_end'
+        },
+        {
+          text: 'Evento Compartilhado',
+          value: 'name',
+          align: 'center'
+        },
+        {
+          text: 'Ação',
+          value: 'name',
+          align: 'center'
         }
       ],
       // items: [],
@@ -284,44 +354,65 @@
     watch: {
       dialog (val) {
         val || this.close()
+      },
+      isUpdating (val) {
+        if (val) {
+          setTimeout(() => (this.isUpdating = false), 3000)
+        }
+      },
+      users (val) {
+        this.shareEvent(val)
       }
     },
     methods: {
-      // initialize () {
-        // this.items = [
-        //   {
-        //     evento: 'Trabalho',
-        //     sobre: 'Reunião',
-        //     dataInicial: new Date(),
-        //     dataFim: new Date()
-        //   },
-        //   {
-        //     evento: 'Trabalho',
-        //     sobre: 'Ensinar o estag',
-        //     dataInicial: new Date(),
-        //     dataFim: new Date()
-        //   },
-        //   {
-        //     evento: 'Trabalho',
-        //     sobre: 'Matar o Chefe',
-        //     dataInicial: new Date(),
-        //     dataFim: new Date()
-        //   },
-        //   {
-        //     evento: 'Futbol',
-        //     sobre: 'Jogar uma pelada',
-        //     dataInicial: new Date(),
-        //     dataFim: new Date()
-        //   },
-        //   {
-        //     evento: 'Faculdade',
-        //     sobre: 'Fazer Trabalho',
-        //     dataInicial: new Date(),
-        //     dataFim: new Date()
-        //   }
-        // ]
-      //   this.setCompromisso()
-      // },
+      remove (item) {
+        // console.log('Adiciona ou remove: ', item)
+        // console.log('this.users: ', this.users)
+        const index = this.users.indexOf(item)
+        if (index >= 0) this.users.splice(index, 1)
+      },
+      shareEvent (item) {
+        // // console.log('Entrou aqui: ', item)
+        // console.log('map: ', item.map(i => i.shared_user_id))
+        let users = item[0]
+        // console.log('users: ', item.map(i => [].concat(i.shared_user_id)))
+        // users.shared_user_id = item
+        //   .map(i => ({name: i.name_event, shared_user_id: i.shared_user_id}))
+        //   .reduce((elem1, elem2) => ,[])
+        users.shared_user_id = item.reduce((accumulator, u) => accumulator.concat(u.shared_user_id), []);
+        console.log('users: ', users)
+        // users = []
+        // updateEvent(omit(users, ['name']))
+        //   .then(data => {
+        //     console.log('Atualizado: ', data)
+        //   })
+        //   .catch(err => {
+        //     console.log('Erro: ', err)
+        //   })
+      },
+      findUsers (item) {
+        // console.log('Item: ', item)
+        getUsers()
+          .then(res => {
+            this.people = res.map((u, i) => {
+              return {
+                name: u.username,
+                shared_user_id: u._id,
+                avatar: this.srcs[i],
+                id_event: item._id,
+                date_end: item.date_end,
+                date_initial: item.date_initial,
+                description: item.description,
+                name_event: item.name,
+                _id: this.id
+              }
+            })
+          })
+          .catch(err => {
+            console.log(err)
+          })
+          .finally(() => (this.isLoading = false))
+      },
       submitTableDateTime (d, time) {
         // console.log('submitTableDateTime: ', d, time, typeof d)
         const date = new Date(d)
