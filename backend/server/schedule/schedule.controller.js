@@ -52,19 +52,20 @@ function updateScheduleNewEvent(req, res, next) {
 function updateScheduleFromEvent(req, res, next) {
   const { _id, id_event } = req.params;
   const { _id: user_id } = req.user;
-  const { name, description, date_initial, date_end, shared_user_id } = req.body;
+  const { name, name_event, description, date_initial, date_end, shared_user_id } = req.body;
 
-  console.log('Entrou no update: ', _id);
-  console.log('Entrou no update user_id: ', user_id);
-  console.log('Entrou no update body: ', req.body);
+  // console.log('Entrou no update: ', _id);
+  // console.log('Entrou no update user_id: ', user_id);
+  console.log('Entrou no update body: ', shared_user_id);
   Schedule.update(
     { _id, user_id, 'event._id': id_event },
     {
       $set: {
-        'event.$.name': name,
+        'event.$.name': name || name_event,
         'event.$.description': description,
         'event.$.date_initial': date_initial,
-        'event.$.date_end': date_end
+        'event.$.date_end': date_end,
+        'event.$.shared_user_id': shared_user_id
       }
     }
   )

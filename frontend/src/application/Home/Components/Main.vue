@@ -96,6 +96,7 @@ export default {
         })
     },
     createNewEvent (event) {
+      console.log('createNewEvent: ', event)
       createEvent(event)
         .then(data => {
           this.loadMySchedule()
@@ -134,27 +135,31 @@ export default {
     loadMySchedule () {
       getMySchedule(this.getIdUser)
         .then(({schedule}) => {
-          // console.log('schedule: ', schedule)
           this.schedule = schedule
           this.mySchendule = schedule.map(s => s.name)
         })
     },
     loadEvent (name) {
+      console.log('loadEvent: ', this.schedule)
+      console.log('Name: ', this.schedule.filter(e => e.name === name))
+      // this.id = this.schedule.filter(e => e.name === name)[0]._id
+      // if (this.schedule[0].event.name) {
       this.items = this.schedule
         .filter(e => e.name === name)
         .map(e => {
           this.id = e._id
           return e.event
-        })[0]
+        })
         .map(item =>
         ({
           _id: item._id,
           name: item.name,
           description: item.description,
           date_initial: new Date(item.date_initial),
-          date_end: new Date(item.date_end)
+          date_end: new Date(item.date_end),
+          shared_user_id: item.shared_user_id
         }))
-
+      // }
       console.log('this._id: ', this.id)
       console.log('event escolhido : ', this.items)
     }

@@ -19,58 +19,58 @@
         :search="search"
       >
         <template slot="items" slot-scope="props">
+          <!-- {{props.item.shared_user_id[0].name}} -->
           <td>{{ props.item.name }}</td>
           <td class="text-xs-left">{{ props.item.description }}</td>
           <td class="text-xs-left">{{ props.item.date_initial.toLocaleString() }}</td>
           <td class="text-xs-left">{{ props.item.date_end.toLocaleString() }}</td>
-          <td class="text-xs-left">
-            <v-flex>
-              <v-autocomplete
-                v-model="friends"
-                :disabled="isUpdating"
-                :items="people"
-                box
-                chips
-                color="blue-grey lighten-2"
-                item-text="name"
-                item-value="name"
-                multiple>
-                <template
-                  slot="selection"
-                  slot-scope="data"
+          <!-- <td class="text-xs-left">
+            <v-autocomplete
+              v-model="users"
+              :disabled="isUpdating"
+              :items="people"
+              @focus="findUsers(props.item)"
+              box
+              chips
+              color="blue-grey lighten-2"
+              item-text="[]"
+              item-value="[]"
+              multiple>
+              <template
+                slot="selection"
+                slot-scope="data"
+              >
+                <v-chip
+                  :selected="data.selected"
+                  close
+                  class="chip--select-multi"
+                  @input="remove(data.item)"
                 >
-                  <v-chip
-                    :selected="data.selected"
-                    close
-                    class="chip--select-multi"
-                    @input="remove(data.item)"
-                  >
-                    <v-avatar>
-                      <img :src="data.item.avatar">
-                    </v-avatar>
-                    {{ data.item.name }}
-                  </v-chip>
+                  <v-avatar>
+                    <img :src="data.item.avatar">
+                  </v-avatar>
+                  {{ data.item.name }}
+                </v-chip>
+              </template>
+              <template
+                slot="item"
+                slot-scope="data"
+              >
+                <template v-if="typeof data.item !== 'object'">
+                  <v-list-tile-content v-text="data.item"></v-list-tile-content>
                 </template>
-                <template
-                  slot="item"
-                  slot-scope="data"
-                >
-                  <template v-if="typeof data.item !== 'object'">
-                    <v-list-tile-content v-text="data.item"></v-list-tile-content>
-                  </template>
-                  <template v-else>
-                    <v-list-tile-avatar>
-                      <img :src="data.item.avatar">
-                    </v-list-tile-avatar>
-                    <v-list-tile-content>
-                      <v-list-tile-title v-html="data.item.name"></v-list-tile-title>
-                      <v-list-tile-sub-title v-html="data.item.group"></v-list-tile-sub-title>
-                    </v-list-tile-content>
-                  </template>
+                <template v-else>
+                  <v-list-tile-avatar>
+                    <img :src="data.item.avatar">
+                  </v-list-tile-avatar>
+                  <v-list-tile-content>
+                    <v-list-tile-title v-html="data.item.name"></v-list-tile-title>
+                    <v-list-tile-sub-title v-html="data.item.group"></v-list-tile-sub-title>
+                  </v-list-tile-content>
                 </template>
-              </v-autocomplete>
-            </v-flex>
-          </td>
+              </template>
+            </v-autocomplete>
+          </td> -->
           <td class="justify-center layout px-0">
             <v-btn icon class="mx-0" @click="editItem(props.item)">
               <v-icon color="teal">edit</v-icon>
@@ -78,6 +78,85 @@
             <v-btn icon class="mx-0" @click="deleteItem(props.item)">
               <v-icon color="pink">delete</v-icon>
             </v-btn>
+            <v-layout v-if="!!props.item.shared_user_id[0].name">
+              <v-dialog v-model="dialogShare" persistent max-width="450px">
+                <v-btn slot="activator" icon class="mx-0" @click="setUsersShare(props.item)">
+                  <!-- @click="deleteItem(props.item)" -->
+                  <v-icon color="primary">share</v-icon>
+                </v-btn>
+                <!-- <v-btn slot="activator" color="primary" dark>Open Dialog</v-btn> -->
+                <v-card>
+                  <v-card-title>
+                    <span class="headline">Compartilhar Evento</span>
+                    <!-- {{!props.item.shared_user_id[0].name}} -->
+                  </v-card-title>
+                  <v-card-text>
+                    <v-text-field
+                      append-icon="search"
+                      label="Search"
+                      single-line
+                      hide-details
+                      v-model="fSearch"
+                    ></v-text-field>
+                    <v-container>
+                      <v-layout wrap>
+                        <v-data-table
+                          :headers="headersShare"
+                          :items="people"
+                          :search="fSearch"
+                          v-model="selected"
+                          item-key="username"
+                          select-all
+                          class="elevation-1">
+                          <!-- <template slot="headers" slot-scope="props">
+                            <tr>
+                              <th>
+                                <v-checkbox
+                                  :input-value="props.all"
+                                  :indeterminate="props.indeterminate"
+                                  primary
+                                  hide-details
+                                  @click.native="toggleAll"
+                                ></v-checkbox>
+                              </th>
+                              <th
+                                v-for="header in props.headers"
+                                :key="header.text"
+                                :class="['column sortable', pagination.descending ? 'desc' : 'asc', header.value === pagination.sortBy ? 'active' : '']"
+                                @click="changeSort(header.value)"
+                              >
+                                <v-icon small>arrow_upward</v-icon>
+                                {{ header.text }}
+                              </th>
+                            </tr>
+                          </template> -->
+                          <template slot="items" slot-scope="props">
+                            <td>
+                              <v-checkbox
+                                v-model="props.selected"
+                                primary
+                                hide-details
+                              ></v-checkbox>
+                            </td>
+                            <td width="290" class="text-xs-center">{{ props.item.username }}</td>
+                            <!-- <td class="justify-center layout px-0">
+                              <v-btn icon class="mx-0" @click="delEventUserShare(props.item)">
+                                <v-icon color="pink">delete</v-icon>
+                              </v-btn>
+                            </td> -->
+                          </template>
+                        </v-data-table>
+                      </v-layout>
+                    </v-container>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" flat @click.native="dialogShare = false">Close</v-btn>
+                    <v-btn color="blue darken-1" flat @click.native="dialogShare = false">Save</v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-layout>
           </td>
         </template>
         <v-alert slot="no-results" :value="true" color="error" icon="warning">
@@ -218,7 +297,7 @@
                       </v-dialog>
                   </v-flex>
                   <v-flex xs12>
-                    <v-autocomplete
+                    <!-- <v-autocomplete
                       v-model="friends"
                       :disabled="isUpdating"
                       :items="people"
@@ -263,7 +342,7 @@
                           </v-list-tile-content>
                         </template>
                       </template>
-                    </v-autocomplete>
+                    </v-autocomplete> -->
                   </v-flex>
                 </v-layout>
                     <!-- </v-form> -->
@@ -288,6 +367,9 @@
 </template>
 <script>
   import { required } from 'vuelidate/lib/validators'
+  import {getUsers, updateEvent, deleteUserEventShare} from '../services.js'
+  // import { omit } from 'lodash'
+  // import findUsers from './testeAuto.vue'
   export default {
     name: 'my-table',
     props: {
@@ -300,7 +382,25 @@
       }
     },
     data: () => ({
+      pagination: {
+        sortBy: 'name'
+      },
+      selected: [],
+      eventSelected: {},
+      users: [],
+      isUpdating: false,
+      people: [],
+      srcs: [
+        'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+        'https://cdn.vuetifyjs.com/images/lists/2.jpg',
+        'https://cdn.vuetifyjs.com/images/lists/3.jpg',
+        'https://cdn.vuetifyjs.com/images/lists/4.jpg',
+        'https://cdn.vuetifyjs.com/images/lists/5.jpg'
+      ],
+      event_id: '',
       search: '',
+      fSearch: '',
+      dialogShare: false,
       dialog: false,
       dateInicio: '',
       dateFim: '',
@@ -314,20 +414,19 @@
       menuFim: false,
       searchUsers: null,
       friends: ['Sandra Adams', 'Britta Holt'],
-      isUpdating: false,
-      people: [
-          { header: 'Usuarios' },
-          { name: 'Sandra Adams', group: 'Group 1', avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg' },
-          { name: 'Ali Connors', group: 'Group 1', avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg' },
-          { name: 'Trevor Hansen', group: 'Group 1', avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg' },
-          { name: 'Tucker Smith', group: 'Group 1', avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg' }
-          // { divider: true },
-          // { header: 'Group 2' },
-          // { name: 'Britta Holt', group: 'Group 2', avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg' },
-          // { name: 'Jane Smith ', group: 'Group 2', avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg' },
-          // { name: 'John Smith', group: 'Group 2', avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg' },
-          // { name: 'Sandra Williams', group: 'Group 2', avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg' }
-      ],
+      // people: [
+      //     { header: 'Usuarios' },
+      //     { name: 'Sandra Adams', group: 'Group 1', avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg' },
+      //     { name: 'Ali Connors', group: 'Group 1', avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg' },
+      //     { name: 'Trevor Hansen', group: 'Group 1', avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg' },
+      //     { name: 'Tucker Smith', group: 'Group 1', avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg' }
+      //     // { divider: true },
+      //     // { header: 'Group 2' },
+      //     // { name: 'Britta Holt', group: 'Group 2', avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg' },
+      //     // { name: 'Jane Smith ', group: 'Group 2', avatar: 'https://cdn.vuetifyjs.com/images/lists/5.jpg' },
+      //     // { name: 'John Smith', group: 'Group 2', avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg' },
+      //     // { name: 'Sandra Williams', group: 'Group 2', avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg' }
+      // ],
       headers: [
         {
           text: 'Evento',
@@ -348,16 +447,33 @@
           text: 'Data Final',
           value: 'date_end'
         },
-        {
-          text: 'Evento Compartilhado',
-          value: 'name'
-        },
+        // {
+        //   text: 'Evento Compartilhado',
+        //   value: 'name',
+        //   align: 'center'
+        // },
         {
           text: 'Ação',
-          align: 'center',
-          value: 'name'
+          value: 'name',
+          align: 'left'
         }
       ],
+      headersShare: [
+        {
+          text: 'Usuarios',
+          align: 'center',
+          sortable: true,
+          value: 'username',
+          width: '250'
+        }
+        // {
+        //   text: 'Ação',
+        //   value: 'calories',
+        //   align: 'center',
+        //   width: '250'
+        // }
+      ],
+      peopleShare: [],
       // items: [],
       editedIndex: -1,
       editedItem: {
@@ -401,74 +517,125 @@
         return this.editedIndex === -1 ? 'Novo Evento' : 'Editar Evento'
       }
     },
-
     watch: {
       dialog (val) {
         val || this.close()
       },
       isUpdating (val) {
-        console.log('Update isUpdating')
         if (val) {
           setTimeout(() => (this.isUpdating = false), 3000)
         }
       },
-      searchUsers (val) {
-        console.log('Mandou pesquisar sim')
-        // Items have already been loaded
-        if (this.people.length > 0) return
-        // this.isLoading = true
-
-        // Lazily load input items
-        window.axios.get('https://api.coinmarketcap.com/v2/listings/')
+      users (val) {
+        this.shareEvent(val)
+      }
+    },
+    mounted () {
+      // this.findUserss()
+    },
+    methods: {
+      toggleAll () {
+        if (this.selected.length) this.selected = []
+        else this.selected = this.people.slice()
+      },
+      changeSort (column) {
+        if (this.pagination.sortBy === column) {
+          this.pagination.descending = !this.pagination.descending
+        } else {
+          this.pagination.sortBy = column
+          this.pagination.descending = false
+        }
+      },
+      delEventUserShare (item) {
+        deleteUserEventShare(item)
+          .then(data => {
+            console.log('Usuario Deletado: ', data)
+          })
+      },
+      setUsersShare (item) {
+        this.event_id = item._id
+        this.eventSelected = item
+        this.findUsers(item.shared_user_id)
+        // this.peopleShare = item.shared_user_id.map(u => ({
+        //   event_id: item._id,
+        //   name: u.name,
+        //   _id: u._id
+        // }))
+      },
+      remove (item) {
+        // console.log('Adiciona ou remove: ', item)
+        // console.log('this.users: ', this.users)
+        const index = this.users.indexOf(item)
+        if (index >= 0) this.users.splice(index, 1)
+      },
+      shareEvent (item) {
+        // console.log('item: ', item)
+        // console.log('users event event: ', this.users)
+        const event = item.reduce((prev, el) => {
+          prev.name = el.name_event
+          prev.date_initial = el.date_initial
+          prev.date_end = el.date_end
+          prev.id_event = el.id_event
+          prev.description = el.description
+          prev._id = el._id
+          prev.shared_user_id.push(el.shared_user_id)
+          return prev
+        }, { name: '', date_initial: '', date_end: '', id_event: '', _id: '', description: '', shared_user_id: [] })
+        // console.log('users event: ', event)
+                // users = []
+        updateEvent(event)
+          .then(data => {
+            console.log('updateEvent event: ', event)
+            this.peopleShare.push({
+              event_id: event.id_event,
+              name: event.name,
+              _id: event._id
+            })
+          })
+          .catch(err => {
+            console.log('Erro: ', err)
+          })
+      },
+      findUsers (item) {
+        getUsers()
+        // console.log('Item: ', item)
           .then(res => {
-            this.people = res.data.data
+            console.log('Usuarios: ', res, item)
+            const username = new Set(item.map(el => el.name))
+            this.selected = res.filter(e => username.has(e.username))
+            this.people = res
+
+            console.log('this.selected: ', this.selected)
+
+            // this.people = res.map((u, i) => {
+            //   return {
+              //     shared_user_id: u._id,
+            //     name: u.username,
+            //     avatar: this.srcs[i],
+            //     id_event: item._id,
+            //     date_end: item.date_end,
+            //     date_initial: item.date_initial,
+            //     description: item.description,
+            //     name_event: item.name,
+            //     _id: this.id
+            //   }
+            // })
           })
           .catch(err => {
             console.log(err)
           })
-          // .finally(() => (this.isLoading = false))
-      }
-    },
-    methods: {
-      remove (item) {
-        const index = this.friends.indexOf(item.name)
-        if (index >= 0) this.friends.splice(index, 1)
+          .finally(() => (this.isLoading = false))
       },
-      // initialize () {
-        // this.items = [
-        //   {
-        //     evento: 'Trabalho',
-        //     sobre: 'Reunião',
-        //     dataInicial: new Date(),
-        //     dataFim: new Date()
-        //   },
-        //   {
-        //     evento: 'Trabalho',
-        //     sobre: 'Ensinar o estag',
-        //     dataInicial: new Date(),
-        //     dataFim: new Date()
-        //   },
-        //   {
-        //     evento: 'Trabalho',
-        //     sobre: 'Matar o Chefe',
-        //     dataInicial: new Date(),
-        //     dataFim: new Date()
-        //   },
-        //   {
-        //     evento: 'Futbol',
-        //     sobre: 'Jogar uma pelada',
-        //     dataInicial: new Date(),
-        //     dataFim: new Date()
-        //   },
-        //   {
-        //     evento: 'Faculdade',
-        //     sobre: 'Fazer Trabalho',
-        //     dataInicial: new Date(),
-        //     dataFim: new Date()
-        //   }
-        // ]
-      //   this.setCompromisso()
-      // },
+      findUserss () {
+        getUsers()
+          .then(res => {
+            console.log('Item res: ', res)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+          .finally(() => (this.isLoading = false))
+      },
       submitTableDateTime (d, time) {
         // console.log('submitTableDateTime: ', d, time, typeof d)
         const date = new Date(d)
@@ -554,6 +721,7 @@
               date_initial: dtIncio,
               date_end: dtFim
             }
+            // console.log('novoEvento: ', novoEvento)
             this.$emit('newEvent', novoEvento)
             this.items.push(novoEvento)
           } else {
