@@ -78,7 +78,8 @@
             <v-btn icon class="mx-0" @click="deleteItem(props.item)">
               <v-icon color="pink">delete</v-icon>
             </v-btn>
-            <v-layout v-if="!!props.item.shared_user_id[0].name">
+            <v-layout v-if="!data">
+              <!-- v-if="!!props.item.shared_user_id[0].name" -->
               <v-dialog v-model="dialogShare" persistent max-width="450px">
                 <v-btn slot="activator" icon class="mx-0" @click="setUsersShare(props.item)">
                   <!-- @click="deleteItem(props.item)" -->
@@ -151,8 +152,8 @@
                   </v-card-text>
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click.native="dialogShare = false">Close</v-btn>
-                    <v-btn color="blue darken-1" flat @click.native="dialogShare = false">Save</v-btn>
+                    <v-btn color="blue darken-1" flat @click.native="dialogShare = false">Fechar</v-btn>
+                    <v-btn color="blue darken-1" flat @click.native="editShareEvent()">Salvar</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
@@ -379,6 +380,9 @@
       },
       id: {
         type: String
+      },
+      data: {
+        type: Object
       }
     },
     data: () => ({
@@ -534,6 +538,32 @@
       // this.findUserss()
     },
     methods: {
+      editShareEvent () {
+        this.dialogShare = false
+        // console.log('This.selected: ', this.selected)
+        // console.log('this.eventSelected: ', this.eventSelected)
+        const { name, date_initial, date_end, _id: id_event, description } = this.eventSelected
+        const { shared_user_id } = this.selected.reduce((prev, el) => {
+          prev.shared_user_id.push(el._id)
+          return prev
+        }, { shared_user_id: [] })
+        // console.log('event: ', { name, date_initial, date_end, id_event, _id, description, shared_user_id })
+        updateEvent({ name, date_initial, date_end, id_event, _id: this.id, description, shared_user_id })
+          .then(data => {
+            console.log('updateEvent event: ', this.data)
+
+            this.$emit('updateList', this.data)
+            // this.findUsers({ name, date_initial, date_end, id_event, _id: this.id, description, shared_user_id })
+            // this.peopleShare.push({
+            //   event_id: event.id_event,
+            //   name: event.name,
+            //   _id: event._id
+            // })
+          })
+          .catch(err => {
+            console.log('Erro: ', err)
+          })
+      },
       toggleAll () {
         if (this.selected.length) this.selected = []
         else this.selected = this.people.slice()
@@ -553,6 +583,7 @@
           })
       },
       setUsersShare (item) {
+        console.log('setUsersShare: ', item)
         this.event_id = item._id
         this.eventSelected = item
         this.findUsers(item.shared_user_id)
@@ -605,7 +636,7 @@
             this.selected = res.filter(e => username.has(e.username))
             this.people = res
 
-            console.log('this.selected: ', this.selected)
+            // console.log('this.selected: ', this.selected)
 
             // this.people = res.map((u, i) => {
             //   return {
@@ -620,16 +651,6 @@
             //     _id: this.id
             //   }
             // })
-          })
-          .catch(err => {
-            console.log(err)
-          })
-          .finally(() => (this.isLoading = false))
-      },
-      findUserss () {
-        getUsers()
-          .then(res => {
-            console.log('Item res: ', res)
           })
           .catch(err => {
             console.log(err)

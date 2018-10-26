@@ -30,8 +30,10 @@
       @compromisso="setCompromisso"
       @newEvent="submitEvent"
       @delEvent="deleteEvent"
+      @updateList="fetchSchedule"
       :items="items"
-      :id="id"/>
+      :id="id"
+      :data="data"/>
   </v-flex>
 </v-layout>
 </template>
@@ -48,6 +50,7 @@ export default {
     MyTable
   },
   data: () => ({
+    data: {},
     arrayEvents: [],
     mySchendule: [],
     schedule: [],
@@ -66,6 +69,11 @@ export default {
     this.loadMySchedule()
   },
   methods: {
+    fetchSchedule (val) {
+      console.log('fetchSchedule: ', val)
+      this.loadMySchedule()
+      setTimeout(() => this.loadEvent(val.name), 500)
+    },
     setCompromisso (events) {
       this.arrayEvents = events
       // console.log('eventos: ', this.arrayEvents)
@@ -96,7 +104,7 @@ export default {
         })
     },
     createNewEvent (event) {
-      console.log('createNewEvent: ', event)
+      // console.log('createNewEvent: ', event)
       createEvent(event)
         .then(data => {
           this.loadMySchedule()
@@ -135,33 +143,36 @@ export default {
     loadMySchedule () {
       getMySchedule(this.getIdUser)
         .then(({schedule}) => {
+          console.log('passou aqui, muito doido')
           this.schedule = schedule
           this.mySchendule = schedule.map(s => s.name)
         })
     },
     loadEvent (name) {
-      console.log('loadEvent: ', this.schedule)
-      console.log('Name: ', this.schedule.filter(e => e.name === name))
-      // this.id = this.schedule.filter(e => e.name === name)[0]._id
-      // if (this.schedule[0].event.name) {
-      this.items = this.schedule
-        .filter(e => e.name === name)
-        .map(e => {
-          this.id = e._id
-          return e.event
-        })
-        .map(item =>
-        ({
-          _id: item._id,
-          name: item.name,
-          description: item.description,
-          date_initial: new Date(item.date_initial),
-          date_end: new Date(item.date_end),
-          shared_user_id: item.shared_user_id
-        }))
-      // }
-      console.log('this._id: ', this.id)
-      console.log('event escolhido : ', this.items)
+      // console.log('loadEvent: ', this.schedule)
+      this.data = this.schedule.map(e => ({name: e.name, _id: e._id})).filter(e => e.name === name)[0]
+      // console.log('this.data: ', this.data)
+      // console.log('Name: ', this.schedule.filter(e => e.name === name))
+      this.id = this.schedule.filter(e => e.name === name)[0]._id
+      if (this.schedule[0].event.name) {
+        this.items = this.schedule
+          .filter(e => e.name === name)
+          .map(e => {
+            this.id = e._id
+            return e.event
+          })
+          .map(item =>
+          ({
+            _id: item._id,
+            name: item.name,
+            description: item.description,
+            date_initial: new Date(item.date_initial),
+            date_end: new Date(item.date_end),
+            shared_user_id: item.shared_user_id
+          }))
+      }
+      // console.log('this._id: ', this.id)
+      // console.log('event escolhido : ', this.items)
     }
   }
 }

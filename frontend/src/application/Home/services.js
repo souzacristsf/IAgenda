@@ -23,3 +23,8 @@ export const deleteEvent = data => {
 export const getUsers = () => {
   return http.get(`/api/users/`).then(response => response.data)
 }
+
+export const deleteUserEventShare = data => {
+  console.log('deleteUserEventShare: ', data)
+  return http.delete(`/api/schedule/${data._id}/event/share/${data.id_event}`).then(response => response.data)
+}
