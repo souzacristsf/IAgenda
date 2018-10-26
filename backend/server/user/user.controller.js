@@ -88,9 +88,10 @@ function update(req, res, next) {
  * @property {number} req.query.limit - Limit number of users to be returned.
  * @returns {User[]}
  */
-function list(req, res, next) {
+function list (req, res, next) {
+  // console.log('RESULTADO USUARIO')
   const { limit = 50, skip = 0 } = req.query;
-  User.list({ limit, skip })
+  User.find({}, {_id: 1, username: 1})
     .then(users => res.json(users))
     .catch(e => next(e));
 }
