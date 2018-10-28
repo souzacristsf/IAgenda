@@ -22,3 +22,7 @@ export const editMySchedule = data => {
   console.log('Entrou aqui no editMySchedule: ', data)
   return http.put(`/api/schedule/${data._id}/edit`, data).then(response => response.data)
 }
+
+export const getUsers = () => {
+  return http.get(`/api/users/`).then(response => response.data)
+}

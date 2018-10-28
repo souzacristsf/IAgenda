@@ -24,53 +24,6 @@
           <td class="text-xs-left">{{ props.item.description }}</td>
           <td class="text-xs-left">{{ props.item.date_initial.toLocaleString() }}</td>
           <td class="text-xs-left">{{ props.item.date_end.toLocaleString() }}</td>
-          <!-- <td class="text-xs-left">
-            <v-autocomplete
-              v-model="users"
-              :disabled="isUpdating"
-              :items="people"
-              @focus="findUsers(props.item)"
-              box
-              chips
-              color="blue-grey lighten-2"
-              item-text="[]"
-              item-value="[]"
-              multiple>
-              <template
-                slot="selection"
-                slot-scope="data"
-              >
-                <v-chip
-                  :selected="data.selected"
-                  close
-                  class="chip--select-multi"
-                  @input="remove(data.item)"
-                >
-                  <v-avatar>
-                    <img :src="data.item.avatar">
-                  </v-avatar>
-                  {{ data.item.name }}
-                </v-chip>
-              </template>
-              <template
-                slot="item"
-                slot-scope="data"
-              >
-                <template v-if="typeof data.item !== 'object'">
-                  <v-list-tile-content v-text="data.item"></v-list-tile-content>
-                </template>
-                <template v-else>
-                  <v-list-tile-avatar>
-                    <img :src="data.item.avatar">
-                  </v-list-tile-avatar>
-                  <v-list-tile-content>
-                    <v-list-tile-title v-html="data.item.name"></v-list-tile-title>
-                    <v-list-tile-sub-title v-html="data.item.group"></v-list-tile-sub-title>
-                  </v-list-tile-content>
-                </template>
-              </template>
-            </v-autocomplete>
-          </td> -->
           <td class="justify-center layout px-0">
             <v-btn icon class="mx-0" @click="editItem(props.item)">
               <v-icon color="teal">edit</v-icon>
@@ -78,7 +31,7 @@
             <v-btn icon class="mx-0" @click="deleteItem(props.item)">
               <v-icon color="pink">delete</v-icon>
             </v-btn>
-            <v-layout v-if="!data">
+            <v-layout v-if="!!data">
               <!-- v-if="!!props.item.shared_user_id[0].name" -->
               <v-dialog v-model="dialogShare" persistent max-width="450px">
                 <v-btn slot="activator" icon class="mx-0" @click="setUsersShare(props.item)">

@@ -89,9 +89,10 @@ function update(req, res, next) {
  * @returns {User[]}
  */
 function list (req, res, next) {
-  // console.log('RESULTADO USUARIO')
+  const {_id} = req.user;
+  console.log('RESULTADO USUARIO: ')
   const { limit = 50, skip = 0 } = req.query;
-  User.find({}, {_id: 1, username: 1})
+  User.find({_id: {$ne: _id}}, {_id: 1, username: 1})
     .then(users => res.json(users))
     .catch(e => next(e));
 }
