@@ -7,9 +7,10 @@ const app = require('./config/express');
 
 const debug = require('debug')('express-mongoose-es6-rest-api:index');
 
-const on = false;
+const on = true;
 const url = on ? config.mongo.hostOnline : config.mongo.host;
 
+console.log('config.mongo.hostOnline: ', config.mongo.hostOnline);
 // make bluebird default Promise
 Promise = require('bluebird'); // eslint-disable-line no-global-assign
 

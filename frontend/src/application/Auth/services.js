@@ -9,5 +9,5 @@ export const loadUserData = data => {
 }
 
 export const create = data => {
-  return http.post('/api/users', data).then(response => response.data)
+  return http.post('/api/new/users', data).then(response => response.data)
 }

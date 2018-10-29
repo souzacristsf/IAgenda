@@ -17,6 +17,9 @@ router.get('/health-check', (req, res) =>
 // mount auth routes at /auth
 router.use('/auth', authRoutes);
 
+// mount user routes at /users
+router.use('/new/users', userRoutes);
+
 // aqui comeca a validacao do JWT
 router.use('/', valitateJwt);
 
