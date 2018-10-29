@@ -27,8 +27,7 @@
     </v-navigation-drawer>
     <v-toolbar
       app
-      :clipped-left="clipped"
-    >
+      :clipped-left="clipped">
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
@@ -41,15 +40,18 @@
       </v-btn>
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
-      <p>
+      <p style="margin: 0px">
         {{email}}
       </p>
+      <v-btn icon title="Sair" @click.stop="onLogout">
+        <v-icon>exit_to_app</v-icon>
+      </v-btn>
     </v-toolbar>
     <v-content>
       <router-view/>
     </v-content>
     <v-footer :fixed="fixed" app>
-      <span>&copy; Denalidecor 2018</span>
+      <span>&copy; IGenda 2018</span>
     </v-footer>
   </v-app>
 </template>
@@ -57,6 +59,7 @@
 <script>
 import nav from '../_nav'
 import { getUser } from '@/auth'
+import {mapActions} from 'vuex'
 
 export default {
   name: 'App',
@@ -69,7 +72,7 @@ export default {
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: 'IAgenda',
+      title: 'IGenda',
       email: ''
     }
   },
@@ -82,6 +85,20 @@ export default {
   mounted () {
     getUser()
       .then(user => (this.email = user.email))
+  },
+  methods: {
+    ...mapActions([
+      'logout'
+    ]),
+    onLogout () {
+      this.logout()
+        .then(() => {
+          this.$router.push('/auth/signin')
+        })
+        .catch(err => {
+          console.log('oi: ', err)
+        })
+    }
   }
 }
 </script>

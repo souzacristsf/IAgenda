@@ -26,6 +26,7 @@ export const autoLogin = ({ dispatch }, {user, token}) => {
 
 export const logout = ({ dispatch }) => {
   // call actions
+  console.log('Entrou aqui no logout')
   return Promise.all([
     dispatch('setToken', null),
     dispatch('setUser', {}),
