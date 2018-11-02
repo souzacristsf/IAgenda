@@ -180,7 +180,7 @@
                         width="290px">
                         <v-text-field
                           slot="activator"
-                          v-model="timeInicio"
+                          v-model="editedItem.timeInicio"
                           label="Hora Inicial"
                           required
                           prepend-icon="access_time"
@@ -188,11 +188,11 @@
                         ></v-text-field>
                         <v-time-picker
                           v-if="menuTimeI"
-                          v-model="timeInicio"
+                          v-model="editedItem.timeInicio"
                         >
                           <v-spacer></v-spacer>
                           <v-btn flat color="primary" @click="menuTimeI = false">Cancel</v-btn>
-                          <v-btn flat color="primary" @click="$refs.menuTimeInicio.save(timeInicio)">OK</v-btn>
+                          <v-btn flat color="primary" @click="$refs.menuTimeInicio.save(editedItem.timeInicio)">OK</v-btn>
                         </v-time-picker>
                       </v-dialog>
                     <!-- </v-flex> -->
@@ -234,7 +234,7 @@
                         width="290px">
                         <v-text-field
                           slot="activator"
-                          v-model="timeFim"
+                          v-model="editedItem.timeFim"
                           label="Hora Final"
                           required
                           prepend-icon="access_time"
@@ -242,11 +242,11 @@
                         ></v-text-field>
                         <v-time-picker
                           v-if="menuTimeF"
-                          v-model="timeFim"
+                          v-model="editedItem.timeFim"
                         >
                           <v-spacer></v-spacer>
                           <v-btn flat color="primary" @click="menuTimeF = false">Cancel</v-btn>
-                          <v-btn flat color="primary" @click="$refs.menuTimeFim.save(timeFim)">OK</v-btn>
+                          <v-btn flat color="primary" @click="$refs.menuTimeFim.save(editedItem.timeFim)">OK</v-btn>
                         </v-time-picker>
                       </v-dialog>
                   </v-flex>
@@ -322,6 +322,7 @@
 <script>
   import { required } from 'vuelidate/lib/validators'
   import {getUsers, updateEvent, deleteUserEventShare} from '../services.js'
+  import moment from 'moment'
   // import { omit } from 'lodash'
   // import findUsers from './testeAuto.vue'
   export default {
@@ -438,7 +439,9 @@
         description: '',
         date_initial: '',
         date_end: '',
-        id_event: ''
+        id_event: '',
+        timeInicio: '',
+        timeFim: ''
       },
       defaultItem: {
         name: '',
@@ -460,13 +463,13 @@
         },
         date_end: {
           required
+        },
+        timeInicio: {
+          required
+        },
+        timeFim: {
+          required
         }
-      },
-      timeInicio: {
-        required
-      },
-      timeFim: {
-        required
       }
     },
     computed: {
@@ -634,12 +637,28 @@
       editItem (item) {
         // if (!this.$v.$invalid) {
         this.editedIndex = this.items.indexOf(item)
-
+        // console.log('Editar evento')
+        // console.log('item.date_initial: ', item.date_initial)
+        // console.log('item.date_end: ', item.date_end)
+        // console.log('moment date_initial: ', moment(item.date_initial).format('YYYY-MM-DD HH:mm:ss'))
+        // console.log('moment date_end: ', moment(item.date_end).format('YYYY-MM-DD HH:mm:ss'))
+        // console.log('moment timeInicio: ', moment(item.date_initial, 'HH:mm:ss').format('hh:mm'))
+        // console.log('moment timeFim: ', moment(item.date_end, 'HH:mm:ss').format('hh:mm'))
+        // console.log('Teste: ', this.editedIndex)
+        // console.log('this.timeInicio: ', this.timeInicio)
+        // console.log('this.timeFim: ', this.timeFim)
+        // console.log('this.editedItem.date_initial: ', this.editedItem.date_initial)
+        // console.log('this.editedItem.date_end: ', this.editedItem.date_end)
+        // moment(item.date_initial).format('YYYY-MM-DD HH:mm:ss'),
         const eItem = {
           name: item.name,
           description: item.description,
-          date_initial: (new Date(item.date_initial)).toISOString(),
-          date_end: (new Date(item.date_end)).toISOString(),
+          date_initial: moment(item.date_initial).format('YYYY-MM-DD'),
+          // date_initial: (new Date(item.date_initial)).toISOString(),
+          // date_end: (new Date(item.date_end)).toISOString(),
+          date_end: moment(item.date_end).format('YYYY-MM-DD'),
+          timeInicio: moment(item.date_initial, 'HH:mm:ss').format('HH:mm'),
+          timeFim: moment(item.date_end, 'HH:mm:ss').format('HH:mm'),
           id_event: item._id
         }
 

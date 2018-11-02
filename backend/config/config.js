@@ -44,4 +44,5 @@ const config = {
   }
 };
 
+console.log('process.env: ', envVars.MONGOOSE_DEBUG);
 module.exports = config;

@@ -7,7 +7,7 @@ const app = require('./config/express');
 
 const debug = require('debug')('express-mongoose-es6-rest-api:index');
 
-const on = true;
+const on = false;
 const url = on ? config.mongo.hostOnline : config.mongo.host;
 
 console.log('config.mongo.hostOnline: ', config.mongo.hostOnline);
